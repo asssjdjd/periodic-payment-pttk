@@ -132,7 +132,7 @@ public class LoanTransactionPaymentServiceImpl implements LoanTransactionPayment
     private ScheduleState createScheduleState(String status) {
         return switch (status) {
             case "OVERDUE" -> overdueState;
-            case "PAID" -> partiallyPaidState;
+            case "PARTIALLY_PAID" -> partiallyPaidState;
             case "PENDING" -> pendingState;
             default -> throw new ResourceException(
                     ExceptionCode.LOAN_PAYMENT_SCHEDUE.getCode(),
