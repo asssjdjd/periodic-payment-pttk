@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: periodic-payment
+
+  datasource:
+    # 1. Thông tin cơ bản
+    url: jdbc:mysql://localhost:3307/periodic-payment?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: K59Ptl*100504
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  # 2. Cấu hình Hikari Connection Pool (Tối ưu cho Production)
+  hikari:
+    pool-name: HikariPool-PeriodicPayment
+    maximum-pool-size: 10 # Số lượng connection tối đa
+    minimum-idle: 5       # Số lượng connection nhàn rỗi tối thiểu
+    idle-timeout: 300000  # 5 phút (ms)
+    max-lifetime: 1800000 # 30 phút (ms)
+    connection-timeout: 20000 # Thời gian chờ kết nối trước khi báo lỗi (20s)
+
+  liquibase:
+    enabled: true
+    # File tổng quản lý tất cả các file thay đổi con
+    change-log: classpath:liquibase/master.xml
+
+  jpa:
+    # 3. Cấu hình Hibernate
+    hibernate:
+      # validate: Kiểm tra schema DB với Entity (Khuyên dùng cho Prod)
+      # update: Tự động update schema (Chỉ dùng cho Dev/Staging)
+      ddl-auto: validate
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: false # Tắt log SQL ở Prod để tránh lộ dữ liệu/giảm hiệu năng
+    properties:
+      hibernate:
+        format_sql: true
+        # Giúp tránh lỗi N+1 và tối ưu fetch data
+        default_batch_fetch_size: 20
+
+  # 4. Quản lý lỗi kết nối
+  sql:
+    init:
+      continue-on-error: false

@@ -1,0 +1,26 @@
+1. Cấu trúc response :
+
+Phải có đủ 3 trường :
+
+{
+    code : 200,
+    message : "Thành công",
+    "data" : {...}
+}
+
+2. Xử lý exception tập trung
+
+3. Từ điển mã lỗi
+
+4. Tự động tracking dữ liệu
+
+5. Quy tắc khi commit
+
+------------------------------------------------
+
+Các bước triển khai :
+1. Viết api response
+2. success response
+3. error response
+
+4. viết cách xử lý exception.
