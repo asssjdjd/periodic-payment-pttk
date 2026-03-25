@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  user-service:
+    build:
+      context: ./user_service
+    container_name: user-service-prod
+    ports:
+      - "8081:8081"
+    environment:
+      # Kết nối ra MySQL đang chạy trên máy Host
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3307/periodic-payment?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    healthcheck:
+      # Docker sẽ dùng lệnh curl này bắn vào API của Spring Boot để kiểm tra
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s # Đợi 40s cho Spring Boot khởi động trước khi check
+    networks:
+      - microservices-net
+    restart: always
+
+  payment-service:
+    build:
+      context: ./payment_service
+    container_name: payment-service-prod
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3307/periodic-payment?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - microservices-net
+    restart: always
+
+  kong-gateway:
+    image: kong:3.6-ubuntu # Cố định version bản Ubuntu ổn định
+    container_name: kong-api-gateway
+    environment:
+      # Kích hoạt chế độ DB-less
+      - KONG_DATABASE=off
+      # Trỏ tới file cấu hình đã map vào volume
+      - KONG_DECLARATIVE_CONFIG=/kong/declarative/kong.yml
+      # Đẩy log ra terminal để dễ debug
+      - KONG_PROXY_ACCESS_LOG=/dev/stdout
+      - KONG_PROXY_ERROR_LOG=/dev/stderr
+      - KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl
+    ports:
+      - "8000:8000" # Cổng Proxy chính để client gọi vào
+      - "8001:8001" # Cổng Admin API (nếu cần xem trạng thái)
+    volumes:
+      # Mount file kong.yml từ máy thật vào bên trong container của Kong
+      - ./kong.yml:/kong/declarative/kong.yml
+    networks:
+      - microservices-net
+    depends_on:
+      - user-service
+      - payment-service
+    restart: always
+
+networks:
+  microservices-net:
+    driver: bridge
