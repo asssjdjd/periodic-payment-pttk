@@ -41,11 +41,13 @@ public class ContractServiceImpl implements ContractService {
         for(Contract contract : contracts) {
             List<LoanPaymentSchedule> loanPaymentSchedules = contract.getPaymentSchedules();
             boolean isActive = false;
+
             for(LoanPaymentSchedule loanPaymentSchedule : loanPaymentSchedules) {
-                if(!"PAID".equalsIgnoreCase(loanPaymentSchedule.getStatus())) {
+                if (!"PAID".equalsIgnoreCase(loanPaymentSchedule.getStatus())) {
                     isActive = true;
                 }
             }
+
             if(isActive == true) {
                 results.add(contract);
             }else {

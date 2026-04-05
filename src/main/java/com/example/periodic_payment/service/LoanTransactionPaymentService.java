@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 
 public interface LoanTransactionPaymentService {
-    List<LoanPaymentScheduleResponse> choosePaymentSchedule(List<LoanPaymentScheduleDTO> loanPaymentSchedules);
+    List<LoanPaymentScheduleResponse> choosePaymentSchedule(List<LoanPaymentScheduleDTO> loanPaymentSchedules,Long contractId);
 
     @Transactional
     LoanPaymentScheduleResponse executePayment(Long scheduleId, BigDecimal amount);

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/v1/customers")
+@RequestMapping("/api/v1/payments")
 @RequiredArgsConstructor
 public class ContractController {
     private final ContractService contractService;
@@ -32,10 +32,10 @@ public class ContractController {
 
         Integer contract = Math.toIntExact(contractId);
         ContractResponse choosedContract = result.get(contract);
+        Long contractRealId = choosedContract.getId();
         List<LoanPaymentScheduleDTO> loanPaymentScheduleDTOS = choosedContract.getPaymentSchedules();
 
-        List<LoanPaymentScheduleResponse> loanPaymentScheduleResponse =  loanTransactionPaymentService.choosePaymentSchedule(loanPaymentScheduleDTOS);
-
+        List<LoanPaymentScheduleResponse> loanPaymentScheduleResponse =  loanTransactionPaymentService.choosePaymentSchedule(loanPaymentScheduleDTOS,contractRealId);
         return new SuccessResponse(loanPaymentScheduleResponse, "Truy vấn danh sách hợp đồng thành công");
     }
 

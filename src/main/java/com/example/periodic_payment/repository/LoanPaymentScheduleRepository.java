@@ -12,4 +12,6 @@ import java.util.List;
 public interface LoanPaymentScheduleRepository extends JpaRepository<LoanPaymentSchedule,Long> {
     @Query("SELECT lps FROM LoanPaymentSchedule lps WHERE lps.contract.id = :contractId AND lps.status <> 'PAID'")
     List<LoanPaymentSchedule> findAllByContractIdAndNotPaid(@Param("contractId") Long contractId);
+
+    List<LoanPaymentSchedule> findAllByContractId(Long contractId);
 }

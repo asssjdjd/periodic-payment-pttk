@@ -30,13 +30,8 @@ public class LoanTransactionPaymentServiceImpl implements LoanTransactionPayment
 
     private final LoanPaymentScheduleRepository repo;
 
-    private final PendingStateImpl pendingState;
-    private final OverdueStateImpl overdueState;
-    private final PartiallyPaidStateImpl partiallyPaidState;
-//    private final ContractRepository contractRepository;
-
     @Override
-    public List<LoanPaymentScheduleResponse> choosePaymentSchedule(List<LoanPaymentScheduleDTO> loanPaymentSchedules) {
+    public List<LoanPaymentScheduleResponse> choosePaymentSchedule(List<LoanPaymentScheduleDTO> loanPaymentSchedules,Long contractId) {
         log.info("[LoanTransactionPaymentService] : The list of LoanPaymentSchedule is {}", loanPaymentSchedules);
         LocalDate today = LocalDate.now();
 
@@ -44,9 +39,9 @@ public class LoanTransactionPaymentServiceImpl implements LoanTransactionPayment
         for(LoanPaymentScheduleDTO loanPaymentScheduleDTO : loanPaymentSchedules) {
             LocalDate dayDue = loanPaymentScheduleDTO.getDueDate();
             long daysOverdue = ChronoUnit.DAYS.between(today,dayDue);
-            if(daysOverdue <= 0) {
-                actives.add(loanPaymentScheduleDTO);
-            }
+//            if(daysOverdue <= 0) {
+            actives.add(loanPaymentScheduleDTO);
+//            }
         }
 
         if(actives.isEmpty()) {
@@ -62,7 +57,7 @@ public class LoanTransactionPaymentServiceImpl implements LoanTransactionPayment
             }
         }
 
-        List<LoanPaymentSchedule> updatedEntities = repo.findAll();
+        List<LoanPaymentSchedule> updatedEntities = repo.findAllByContractId(contractId);
         List<LoanPaymentScheduleResponse> reals = updatedEntities.stream()
                 .filter(entity -> !"PAID".equals(entity.getStatus())) // Chỉ bỏ PAID
                 .map(entity -> {
@@ -71,18 +66,23 @@ public class LoanTransactionPaymentServiceImpl implements LoanTransactionPayment
                 .collect(Collectors.toList());
 
 
-        List<LoanPaymentScheduleResponse> result = new ArrayList<>();
-        for(LoanPaymentScheduleResponse loanPaymentScheduleResponse : reals)  {
-            LocalDate due = loanPaymentScheduleResponse.getDueDate();
-            long dayBetween = ChronoUnit.DAYS.between(today,due);
-            log.info("[LoanTransactionPaymentServiceImpl] Day is {}" ,dayBetween);
-            result.add(loanPaymentScheduleResponse);
-            if(dayBetween > 0) {
-                break;
-            }
-        }
-        return result;
+//        List<LoanPaymentScheduleResponse> result = new ArrayList<>();
+//        for(LoanPaymentScheduleResponse loanPaymentScheduleResponse : reals)  {
+//            LocalDate due = loanPaymentScheduleResponse.getDueDate();
+//            long dayBetween = ChronoUnit.DAYS.between(today,due);
+//            log.info("[LoanTransactionPaymentServiceImpl] Day is {}" ,dayBetween);
+//            result.add(loanPaymentScheduleResponse);
+//            if(dayBetween > 0) {
+//                break;
+//            }
+//        }
+        return reals;
     }
+    private final PendingStateImpl pendingState;
+    private final OverdueStateImpl overdueState;
+    private final PartiallyPaidStateImpl partiallyPaidState;
+//    private final ContractRepository contractRepository;
+
 
     @Override
     public LoanPaymentScheduleResponse executePayment(Long scheduleId, BigDecimal amount) {
