@@ -1,21 +1,21 @@
 FROM eclipse-temurin:21-jre-alpine
 
-LABEL description="Payment Service - Core Domain"
-LABEL maintainer="backend-team"
+LABEL description="PaymentService - Core Domain"
+LABEL maintainer="Phạm Thành Long"
 
 WORKDIR /app
 
 # Cài đặt curl để Docker Compose gọi Healthcheck
 RUN apk add --no-cache curl
 
-# Dùng wildcard để copy file jar bất kỳ sinh ra trong target
-COPY target/*.jar app.jar
+# Phải copy đúng target của payment_service
+COPY payment_service/target/*.jar app.jar
 
 # Tạo user không có quyền root để chạy ứng dụng (Bảo mật)
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 USER appuser
 
-# Expose đúng cổng 8080 của User Service
+# Expose đúng cổng 8081 của User Service
 EXPOSE 8080
 
 # Lệnh thực thi tối ưu hóa cho môi trường Container
