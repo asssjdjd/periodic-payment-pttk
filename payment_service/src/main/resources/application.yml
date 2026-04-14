@@ -8,7 +8,7 @@ spring:
 
   datasource:
     # 1. Thông tin cơ bản
-    url: jdbc:mysql://localhost:3307/periodic-payment?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3307/preodic_payment?useSSL=false&serverTimezone=Asia/Ho_Chi_Minh&allowPublicKeyRetrieval=true
     username: root
     password: K59Ptl*100504
     driver-class-name: com.mysql.cj.jdbc.Driver

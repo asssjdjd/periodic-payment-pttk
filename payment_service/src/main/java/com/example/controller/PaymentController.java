@@ -25,21 +25,21 @@ public class PaymentController {
 
     @GetMapping("/{customerId}/contracts/active")
     public ApiResponse getActiveContracts(@PathVariable Long customerId) {
-        log.info("📋 [Payment Service] Processing getActiveContracts request - customerId: {}", customerId);
+        log.info(" [Payment Service] Processing getActiveContracts request - customerId: {}", customerId);
         
         try {
             List<ContractResponse> result = contractService.getActiveContractsByCustomerId(customerId);
-            log.info("✅ [Payment Service] getActiveContracts successful - found {} contracts", result.size());
+            log.info(" [Payment Service] getActiveContracts successful - found {} contracts", result.size());
             return new SuccessResponse(result, "Truy vấn danh sách hợp đồng thành công");
         } catch (Exception e) {
-            log.error("❌ [Payment Service] Error getting active contracts: ", e);
+            log.error(" [Payment Service] Error getting active contracts: ", e);
             throw e;
         }
     }
 
     @GetMapping("/{customerId}/schedule/{contractId}")
     public ApiResponse getLoanPaymentSchedule(@PathVariable Long customerId,@PathVariable Long contractId) {
-        log.info("📅 [Payment Service] Processing getLoanPaymentSchedule - customerId: {}, contractId: {}", 
+        log.info(" [Payment Service] Processing getLoanPaymentSchedule - customerId: {}, contractId: {}",
                 customerId, contractId);
         
         try {
@@ -52,11 +52,11 @@ public class PaymentController {
             List<LoanPaymentScheduleResponse> loanPaymentScheduleResponse =  
                     loanTransactionPaymentService.choosePaymentSchedule(loanPaymentScheduleDTOS,contractRealId);
 
-            log.info("✅ [Payment Service] getLoanPaymentSchedule successful - found {} schedules", 
+            log.info(" [Payment Service] getLoanPaymentSchedule successful - found {} schedules",
                     loanPaymentScheduleResponse.size());
             return new SuccessResponse(loanPaymentScheduleResponse, "Truy vấn danh sách hợp đồng thành công");
         } catch (Exception e) {
-            log.error("❌ [Payment Service] Error getting loan payment schedule: ", e);
+            log.error("[Payment Service] Error getting loan payment schedule: ", e);
             throw e;
         }
     }
@@ -66,12 +66,12 @@ public class PaymentController {
             @PathVariable Long customerId,
             @RequestBody PaymentRequest request) { // Request chứa scheduleId và amount
 
-        log.info("💳 [Payment Service] Processing payment - customerId: {}, scheduleId: {}, amount: {}", 
+        log.info(" [Payment Service] Processing payment - customerId: {}, scheduleId: {}, amount: {}",
                 customerId, request.getScheduleId(), request.getAmount());
         
         // Kiểm tra tính hợp lệ cơ bản của số tiền
         if (request.getAmount().compareTo(BigDecimal.ZERO) <= 0) {
-            log.warn("⚠️ [Payment Service] Invalid payment amount: {}", request.getAmount());
+            log.warn("️ [Payment Service] Invalid payment amount: {}", request.getAmount());
             return new ErrorResponse("Số tiền thanh toán phải lớn hơn 0");
         }
 
