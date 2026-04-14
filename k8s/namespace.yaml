@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: periodic-payment
-  labels:
-    name: periodic-payment
-    environment: production
