@@ -35,25 +35,30 @@ public class CustomerServiceImpl implements CustomerService {
                 .collect(Collectors.toList());
     }
 
-
     @Override
-    @Transactional(readOnly = true)
-    public List<CustomerResponse> searchCustomersByCccd(String cccd) {
-        log.info("[Customer Service] : Thực hiện tìm kiếm khách hàng với số CCCD chứa: {}", cccd);
-
-        if (cccd.isBlank()) {
-            throw new ResourceException(ExceptionCode.CCCD_NOT_FOUND.getCode(), ExceptionCode.CCCD_NOT_FOUND.getMessage());
-        }
-        // Gọi xuống DB lấy danh sách khớp
-        List<Customer> customers = customerRepository.findByCccdContaining(cccd);
-
-        if(customers.isEmpty()) {
-            throw new ResourceException(ExceptionCode.USER_NOT_FOUND.getCode(),ExceptionCode.USER_NOT_FOUND.getMessage());
-        }
-
-        // Map từ Entity sang DTO
-        return customers.stream()
-                .map(CustomerResponse::fromEntity)
-                .collect(Collectors.toList());
+    public List<Customer> validate(String name, String password) {
+       return customerRepository.findByFullNameAndPassword(name,password);
     }
+
+
+//    @Override
+//    @Transactional(readOnly = true)
+//    public List<CustomerResponse> searchCustomersByCccd(String cccd) {
+//        log.info("[Customer Service] : Thực hiện tìm kiếm khách hàng với số CCCD chứa: {}", cccd);
+//
+//        if (cccd.isBlank()) {
+//            throw new ResourceException(ExceptionCode.CCCD_NOT_FOUND.getCode(), ExceptionCode.CCCD_NOT_FOUND.getMessage());
+//        }
+//        // Gọi xuống DB lấy danh sách khớp
+//        List<Customer> customers = customerRepository.findByFullrnameAndPassWord(cccd);
+//
+//        if(customers.isEmpty()) {
+//            throw new ResourceException(ExceptionCode.USER_NOT_FOUND.getCode(),ExceptionCode.USER_NOT_FOUND.getMessage());
+//        }
+//
+//        // Map từ Entity sang DTO
+//        return customers.stream()
+//                .map(CustomerResponse::fromEntity)
+//                .collect(Collectors.toList());
+//    }
 }

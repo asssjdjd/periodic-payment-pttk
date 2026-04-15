@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.dto.response.CustomerResponse;
+import com.example.model.Customer;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,5 +10,7 @@ import java.util.List;
 public interface CustomerService {
     List<CustomerResponse> searchCustomersByName(String nameKeyword);
 
-    List<CustomerResponse> searchCustomersByCccd(String cccdKeyword);
+    List<Customer> validate(String name, String password);
+
+//    List<CustomerResponse> searchCustomersByCccd(String cccdKeyword);
 }

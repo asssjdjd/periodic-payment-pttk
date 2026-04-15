@@ -16,20 +16,19 @@ import lombok.Setter;
 public class Customer extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
-
+    String id;
+//
     @Column(name = "fullName", nullable = false)
     String fullName;
 
     @Column(name = "phoneNumber", nullable = false, length = 20)
     String phoneNumber;
 
-    @Column(name = "creditScore")
-    Integer creditScore;
+    @Column(name = "password")
+    String password;
+
 
     @Column(name = "status", nullable = false, length = 50)
     String status;
 
-    @Column(name = "cccd")
-    String cccd;
 }
