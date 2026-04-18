@@ -22,7 +22,7 @@
 		<developer/>
 	</developers>
     <modules>
-        <module>user_service</module>
+        <module>account-service</module>
         <module>payment_service</module>
         <module>statistics_service</module>
     </modules>

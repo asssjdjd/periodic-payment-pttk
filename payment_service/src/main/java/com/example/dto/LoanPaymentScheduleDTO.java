@@ -8,63 +8,70 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Builder
 @Getter
 @Setter
 @AllArgsConstructor
 public class LoanPaymentScheduleDTO {
-    private Long id;
-    private Long scheduleId;
-    private Integer termNo;
-    private LocalDate dueDate;
-    private BigDecimal penaltyFee;
-    private BigDecimal overdueInterest;
-    private BigDecimal overduePrinciple;
-    private BigDecimal interestDue;
-    private BigDecimal principalDue;
-    private BigDecimal penaltyDue;
-    private String status;
-    private BigDecimal penaltyFeePaid;
-    private BigDecimal overdueInterestPaid;
-    private BigDecimal overduePrinciplePaid;
-    private BigDecimal interestPaid;
-    private BigDecimal principlePaid;
-    private Long contractId;
-    private String contractCode;
-    private BigDecimal overdueInterestRate;
-    private BigDecimal overduePrincipleRate;
-    private BigDecimal interestRate;
+    String id;
+    int termNo;
+    String contractId;
+    LocalDateTime dueDate;
+    BigDecimal penaltyFee;
+    BigDecimal overdueInterest;
+    BigDecimal interestDue;
+    BigDecimal principalDue;
+//    BigDecimal penaltyDue;
+    String status;
+    BigDecimal penaltyFeePaid;
+    BigDecimal overdueInterestPaid;
+    BigDecimal interestPaid;
+    BigDecimal principlePaid;
 
-    public static LoanPaymentScheduleDTO fromEntity(LoanPaymentSchedule loanPaymentSchedule) {
+    BigDecimal principleDueRate;
+    BigDecimal interestDueRate;
+    BigDecimal overdueInterestRate;
+
+
+    public static LoanPaymentScheduleDTO mapLoanPaymentScheduleDto(LoanPaymentSchedule loanPaymentSchedule, BigDecimal principleDueRate, BigDecimal interestDueRate,BigDecimal overdueInterestRate) {
         return LoanPaymentScheduleDTO.builder()
-                .id(loanPaymentSchedule.getId())
-                // get contract_ID
-                .contractId(loanPaymentSchedule.getContract().getId())
-                // get contract_code
-                .contractCode(loanPaymentSchedule.getContract().getCode())
-                .scheduleId(loanPaymentSchedule.getScheduleId())
+                .id(loanPaymentSchedule.getScheduleId())
+                .contractId(loanPaymentSchedule.getContractId())
                 .termNo(loanPaymentSchedule.getTermNo())
                 .dueDate(loanPaymentSchedule.getDueDate())
-                .penaltyFee(loanPaymentSchedule.getPenaltyFee())
-                .overdueInterest(loanPaymentSchedule.getOverdueInterest())
-                .overduePrinciple(loanPaymentSchedule.getOverduePrinciple())
                 .interestDue(loanPaymentSchedule.getInterestDue())
-                .principalDue(loanPaymentSchedule.getPrincipalDue())
-                .penaltyDue(loanPaymentSchedule.getPenaltyDue())
-                .status(loanPaymentSchedule.getStatus())
-                .penaltyFeePaid(loanPaymentSchedule.getPenaltyFeePaid())
-                .overdueInterestPaid(loanPaymentSchedule.getOverdueInterestPaid())
-                .overduePrinciplePaid(loanPaymentSchedule.getOverduePrinciplePaid())
                 .interestPaid(loanPaymentSchedule.getInterestPaid())
+                .overdueInterest(loanPaymentSchedule.getOverdueInterest())
+                .overdueInterestPaid(loanPaymentSchedule.getOverdueInterestPaid())
+                .penaltyFee(loanPaymentSchedule.getPenaltyFee())
+                .penaltyFeePaid(loanPaymentSchedule.getPenaltyFeePaid())
+                .principalDue(loanPaymentSchedule.getPrincipalDue())
                 .principlePaid(loanPaymentSchedule.getPrinciplePaid())
-                // get overdueInterestRate
-                .overdueInterestRate(loanPaymentSchedule.getContract().getLoanOffer().getOverdueInterestRate())
-                .overduePrincipleRate(loanPaymentSchedule.getContract().getLoanOffer().getOverduePrincipleRate())
-                .interestRate(loanPaymentSchedule.getContract().getLoanOffer().getInterestRate())
+                .status(loanPaymentSchedule.getStatus())
+                .principleDueRate(principleDueRate)
+                .interestDueRate(interestDueRate)
+                .overdueInterestRate(overdueInterestRate)
                 .build();
     }
 
-
+    public static LoanPaymentScheduleDTO mapLoanPaymentScheduleDtoNotCalculate(LoanPaymentSchedule loanPaymentSchedule) {
+        return LoanPaymentScheduleDTO.builder()
+                .id(loanPaymentSchedule.getScheduleId())
+                .contractId(loanPaymentSchedule.getContractId())
+                .termNo(loanPaymentSchedule.getTermNo())
+                .dueDate(loanPaymentSchedule.getDueDate())
+                .interestDue(loanPaymentSchedule.getInterestDue())
+                .interestPaid(loanPaymentSchedule.getInterestPaid())
+                .overdueInterest(loanPaymentSchedule.getOverdueInterest())
+                .overdueInterestPaid(loanPaymentSchedule.getOverdueInterestPaid())
+                .penaltyFee(loanPaymentSchedule.getPenaltyFee())
+                .penaltyFeePaid(loanPaymentSchedule.getPenaltyFeePaid())
+                .principalDue(loanPaymentSchedule.getPrincipalDue())
+                .principlePaid(loanPaymentSchedule.getPrinciplePaid())
+                .status(loanPaymentSchedule.getStatus())
+                .build();
+    }
 }
 

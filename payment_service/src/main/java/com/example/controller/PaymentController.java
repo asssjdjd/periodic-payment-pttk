@@ -24,7 +24,7 @@ public class PaymentController {
     private final LoanTransactionPaymentService loanTransactionPaymentService;
 
     @GetMapping("/{customerId}/contracts/active")
-    public ApiResponse getActiveContracts(@PathVariable Long customerId) {
+    public ApiResponse getActiveContracts(@PathVariable String customerId) {
         log.info(" [Payment Service] Processing getActiveContracts request - customerId: {}", customerId);
         
         try {
@@ -38,19 +38,25 @@ public class PaymentController {
     }
 
     @GetMapping("/{customerId}/schedule/{contractId}")
-    public ApiResponse getLoanPaymentSchedule(@PathVariable Long customerId,@PathVariable Long contractId) {
+    public ApiResponse getLoanPaymentSchedule(@PathVariable String customerId,@PathVariable String contractId) {
         log.info(" [Payment Service] Processing getLoanPaymentSchedule - customerId: {}, contractId: {}",
                 customerId, contractId);
         
         try {
             List<ContractResponse> result = contractService.getActiveContractsByCustomerId(customerId);
+            ContractResponse choosedContract = null;
 
-            Integer contract = Math.toIntExact(contractId);
-            ContractResponse choosedContract = result.get(contract);
+            for(ContractResponse contractResponse : result) {
+                if (contractResponse.getId().trim().equals(contractId.trim())) {
+                    choosedContract = contractResponse;
+                    break;
+                }
+            }
+            assert choosedContract != null;
+
             List<LoanPaymentScheduleDTO> loanPaymentScheduleDTOS = choosedContract.getPaymentSchedules();
-            Long contractRealId = choosedContract.getId();
             List<LoanPaymentScheduleResponse> loanPaymentScheduleResponse =  
-                    loanTransactionPaymentService.choosePaymentSchedule(loanPaymentScheduleDTOS,contractRealId);
+                    loanTransactionPaymentService.choosePaymentSchedule(loanPaymentScheduleDTOS,contractId);
 
             log.info(" [Payment Service] getLoanPaymentSchedule successful - found {} schedules",
                     loanPaymentScheduleResponse.size());
@@ -63,7 +69,7 @@ public class PaymentController {
 
     @PostMapping("/{customerId}/contracts/payment")
     public ApiResponse paymentLoanPaymentSchedule(
-            @PathVariable Long customerId,
+            @PathVariable String customerId,
             @RequestBody PaymentRequest request) { // Request chứa scheduleId và amount
 
         log.info(" [Payment Service] Processing payment - customerId: {}, scheduleId: {}, amount: {}",
@@ -79,11 +85,11 @@ public class PaymentController {
             LoanPaymentScheduleResponse response = loanTransactionPaymentService
                     .executePayment(request.getScheduleId(), request.getAmount());
 
-            log.info("✅ [Payment Service] Payment successful - scheduleId: {}, amount: {}", 
+            log.info("[Payment Service] Payment successful - scheduleId: {}, amount: {}",
                     request.getScheduleId(), request.getAmount());
             return new SuccessResponse(response, "Thanh toán kỳ hạn thành công");
         } catch (Exception e) {
-            log.error("❌ [Payment Service] Payment error - scheduleId: {}, amount: {}", 
+            log.error(" [Payment Service] Payment error - scheduleId: {}, amount: {}",
                     request.getScheduleId(), request.getAmount(), e);
             return new ErrorResponse("Lỗi hệ thống: " + e.getMessage());
         }

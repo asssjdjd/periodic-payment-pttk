@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
@@ -23,23 +24,14 @@ public class PendingStateImpl implements ScheduleState {
     private final OverdueStateImpl overdueState;
     private final LoanPaymentScheduleRepository scheduleRepository;
 
-    @Override
-    public void recalculate(LoanPaymentScheduleDTO context) {
-        if (LocalDate.now().isAfter(context.getDueDate())) {
-            // Đã quá hạn -> Chuyển giao cho OverdueState xử lý
-            overdueState.recalculate(context);
-        }else {
-            throw new ResourceException(ExceptionCode.LOAN_PAYMENT_SCHEDUE.getCode(),ExceptionCode.LOAN_PAYMENT_SCHEDUE.getMessage());
-        }
-    }
 
     @Override
     @Transactional
-    public BigDecimal pay(Long loanPaymentScheduleId, BigDecimal amount) {
+    public BigDecimal pay(String loanPaymentScheduleId, BigDecimal amount) {
 
         LoanPaymentSchedule entity = scheduleRepository.findById(loanPaymentScheduleId)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy kỳ thanh toán với ID: " + loanPaymentScheduleId));
-        log.info("[PendingStateImpl] : Xử lý thanh toán cho kỳ ĐẾN HẠN ID: {}, Số tiền nộp: {}", entity.getId(), amount);
+        log.info("[PendingStateImpl] : Xử lý thanh toán cho kỳ ĐẾN HẠN ID: {}, Số tiền nộp: {}", entity.getContractId(), amount);
 
         BigDecimal remaining = amount;
 
@@ -60,12 +52,12 @@ public class PendingStateImpl implements ScheduleState {
             entity.setPrinciplePaid(entity.getPrincipalDue());
             remaining = remaining.subtract(principalOwed);
             entity.setStatus("PAID");
-        } else {
+            entity.setDueDate(LocalDateTime.now());
+        }else {
             entity.setPrinciplePaid(entity.getPrinciplePaid().add(remaining));
-            entity.setStatus("PARTIALLY_PAID");
             remaining = BigDecimal.ZERO;
         }
-//        entity.setDueDate(LocalDate.now());
+;
         scheduleRepository.save(entity);
         return remaining;
     }

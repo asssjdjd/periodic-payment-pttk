@@ -33,6 +33,8 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService {
 
     private final CustomerRepository customerRepository;
 
+    // OVERDUE, PENDING, PAID
+
     @Override
     public StatisticCustomerResponse getStatisticCustomerOutstandingDebt(Float maxDebt, Float minDebt, LocalDate endDate, LocalDate fromDate) {
         List<Customer> customers = customerRepository.findAll(); // Cần tối ưu query ở đây sau
@@ -62,21 +64,20 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService {
 
             // 2. Logic Filter theo Dư Nợ (minDebt, maxDebt)
             // Lấy ra khách hàng có nợ nằm trong khoảng min - max
-            if (totalDebt.compareTo(min) >= 0 && totalDebt.compareTo(max) <= 0) {
-                CustomerStatisticDto customerStatisticDto = new CustomerStatisticDto();
-                customerStatisticDto.setCustomerName(customer.getFullName());
-                customerStatisticDto.setCustomerPhone(customer.getPhoneNumber());
-                customerStatisticDto.setContracts(contractDtos);
+            CustomerStatisticDto customerStatisticDto = new CustomerStatisticDto();
+            customerStatisticDto.setCustomerName(customer.getFullName());
+            customerStatisticDto.setCustomerPhone(customer.getPhoneNumber());
+            customerStatisticDto.setContracts(contractDtos);
 
                 // 3. SỬA LỖI: Gán các tổng vào DTO
-                customerStatisticDto.setTotalDebt(totalDebt);
-                customerStatisticDto.setTotalInterestRemaining(totalInterestRemaining);
-                customerStatisticDto.setTotalPrincipleRemaining(totalPrincipleRemaining);
-                customerStatisticDto.setTotalPenalty(totalPenalty);
-                customerStatisticDto.setTotalOverdue(totalOverdue);
+            customerStatisticDto.setTotalDebt(totalDebt);
+            customerStatisticDto.setTotalInterestRemaining(totalInterestRemaining);
+            customerStatisticDto.setTotalPrincipleRemaining(totalPrincipleRemaining);
+            customerStatisticDto.setTotalPenalty(totalPenalty);
+            customerStatisticDto.setTotalOverdue(totalOverdue);
 
-                customerStatisticDtos.add(customerStatisticDto);
-            }
+            customerStatisticDtos.add(customerStatisticDto);
+
         }
         return new StatisticCustomerResponse(customerStatisticDtos);
     }
@@ -126,7 +127,6 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService {
                 .interestPaid(loanPaymentSchedule.getInterestPaid())
                 .overdueInterest(loanPaymentSchedule.getOverdueInterest())
                 .overdueInterestPaid(loanPaymentSchedule.getOverdueInterestPaid())
-                .penaltyDue(loanPaymentSchedule.getPenaltyDue())
                 .penaltyFee(loanPaymentSchedule.getPenaltyFee())
                 .penaltyFeePaid(loanPaymentSchedule.getPenaltyFeePaid())
                 .principalDue(loanPaymentSchedule.getPrincipalDue())

@@ -46,8 +46,6 @@ public class LoanPaymentSchedule {
     @Column(name = "principalDue", precision = 18, scale = 2)
     BigDecimal principalDue;
 
-    @Column(name = "penaltyDue", precision = 18, scale = 2)
-    BigDecimal penaltyDue;
 
     @Column(name = "status", length = 50)
     String status;

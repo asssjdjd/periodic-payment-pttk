@@ -1,49 +1,77 @@
 package com.example.job;
 
+import com.example.model.Contract;
+import com.example.model.LoanPaymentSchedule;
+import com.example.repository.ContractRepository;
+import com.example.repository.LoanPaymentScheduleRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class SlotBlockCleanupJob {
-    
+public class LoanPaymentScheduleJob {
+
+    private final LoanPaymentScheduleRepository scheduleRepository;
+    private final ContractRepository contractRepository;
 
     // Chạy mỗi 60,000 milliseconds (1 phút)
     @Scheduled(fixedRate = 60000)
     public void cleanupExpiredSlots() {
-        log.info("[Inventory] [Cleanup Job] Bắt đầu quét các SlotBlocks hết hạn...");
+        LocalDateTime now = LocalDateTime.now();
+        log.info("Bắt đầu quét các lịch thanh toán quá hạn lúc: {}", now);
 
-        // 1. Tìm tất cả các ID hết hạn
-        List<UUID> expiredIds = slotBlockRepository.findExpiredSlotBlockIds(LocalDateTime.now());
+        List<LoanPaymentSchedule> overdueSchedules = scheduleRepository.findOverdueSchedules(now);
 
-        if (expiredIds.isEmpty()) {
-            return;
+        if (overdueSchedules.isEmpty()) {
+            return; // Không có dữ liệu thì dừng luôn
         }
 
-        log.info("[inventory] [Cleanup Job] Tìm thấy {} bản ghi hết hạn cần xử lý.", expiredIds.size());
+        for (LoanPaymentSchedule schedule : overdueSchedules) {
 
-        // 2. Xử lý từng bản ghi một
-        int successCount = 0;
-        int errorCount = 0;
+            Contract contract = contractRepository.findById(schedule.getContractId())
+                    .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy contract với id : " + schedule.getContractId()));
 
-        for (UUID id : expiredIds) {
-            try {
-                // Gọi sang Service. Nhờ REQUIRES_NEW, nếu 1 thằng lỗi, thằng khác vẫn chạy bình thường
-                tourInventoryService.releaseExpiredSlotBlock(id);
-                successCount++;
-            } catch (Exception e) {
-                log.error("[Cleanup Job] Lỗi khi nhả vé cho SlotBlock ID: {}", id, e);
-                errorCount++;
+            // 1. Chuyển trạng thái
+
+
+            // 2. Tính toán số ngày quá hạn (Days Overdue)
+            long overdueDays = ChronoUnit.DAYS.between(schedule.getDueDate().toLocalDate(), now.toLocalDate());
+
+            // Nếu số ngày <= 0 (do chênh lệch giờ nhưng chưa qua ngày mới), bỏ qua tính lãi
+            if (overdueDays > 0) {
+                // Xử lý null an toàn cho các trường số tiền
+                schedule.setStatus("OVERDUE");
+                BigDecimal principalDue = getOrDefault(schedule.getPrincipalDue());
+                BigDecimal principlePaid = getOrDefault(schedule.getPrinciplePaid());
+                BigDecimal overdueRate = getOrDefault(contract.getOverdueInterestRate());
+
+                // 3. Thực thi công thức: (principalDue - principlePaid) * rate * overdueDays
+                BigDecimal remainingPrincipal = principalDue.subtract(principlePaid);
+
+                // Tránh trường hợp âm (đã trả dư)
+                if (remainingPrincipal.compareTo(BigDecimal.ZERO) > 0) {
+                    BigDecimal overdueInterest = remainingPrincipal
+                            .multiply(overdueRate)
+                            .multiply(BigDecimal.valueOf(overdueDays));
+
+                    schedule.setOverdueInterest(overdueInterest);
+                }
             }
+            scheduleRepository.saveAll(overdueSchedules);
         }
+    }
 
-        log.info("[Cleanup Job] Hoàn tất. Thành công: {}, Thất bại: {}", successCount, errorCount);
+    private BigDecimal getOrDefault(BigDecimal value) {
+        return value != null ? value : BigDecimal.ZERO;
     }
 }

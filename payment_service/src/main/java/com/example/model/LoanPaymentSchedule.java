@@ -1,10 +1,14 @@
 package com.example.model;
 
+
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "loanpaymentschedule")
@@ -13,29 +17,53 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LoanPaymentSchedule extends BaseEntity{
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class LoanPaymentSchedule extends BaseEntity {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "contractId", nullable = false)
-    private Contract contract;
+    @Id
+    @Column(name = "scheduleId")
+    String scheduleId;
 
-    @Column(name = "scheduleId") private Long scheduleId;
-    @Column(name = "termNo", nullable = false) private Integer termNo;
-    @Column(name = "dueDate", nullable = false) private LocalDate dueDate;
+    @Column(name = "contractId", nullable = false)
+    String contractId;
 
-    @Column(name = "penaltyFee", nullable = false) private BigDecimal penaltyFee;
-    @Column(name = "overdueInterest", nullable = false) private BigDecimal overdueInterest;
-    @Column(name = "overduePrinciple", nullable = false) private BigDecimal overduePrinciple;
-    @Column(name = "interestDue", nullable = false) private BigDecimal interestDue;
-    @Column(name = "principalDue", nullable = false) private BigDecimal principalDue;
-    @Column(name = "penaltyDue", nullable = false) private BigDecimal penaltyDue;
-    @Column(name = "status") private String status;
+    @Column(name = "termNo", nullable = false)
+    int termNo;
 
-    @Column(name = "penaltyFeePaid", nullable = false) private BigDecimal penaltyFeePaid;
-    @Column(name = "overdueInterestPaid", nullable = false) private BigDecimal overdueInterestPaid;
-    @Column(name = "overduePrinciplePaid", nullable = false) private BigDecimal overduePrinciplePaid;
-    @Column(name = "interestPaid", nullable = false) private BigDecimal interestPaid;
-    @Column(name = "principlePaid", nullable = false) private BigDecimal principlePaid;
+    @Column(name = "dueDate", nullable = false)
+    LocalDateTime dueDate;
+
+    // --- CÁC KHOẢN PHẢI THU (DUE) ---
+
+    @Column(name = "penaltyFee", precision = 18, scale = 2)
+    BigDecimal penaltyFee;
+
+    @Column(name = "overdueInterest", precision = 18, scale = 2)
+    BigDecimal overdueInterest;
+
+    @Column(name = "interestDue", precision = 18, scale = 2)
+    BigDecimal interestDue;
+
+    @Column(name = "principalDue", precision = 18, scale = 2)
+    BigDecimal principalDue;
+
+    @Column(name = "status", length = 50)
+    String status;
+
+    // OVERDUE , PAID , PENDING
+
+    // --- CÁC KHOẢN ĐÃ THANH TOÁN (PAID) ---
+
+    @Column(name = "penaltyFeePaid", precision = 18, scale = 2)
+    BigDecimal penaltyFeePaid;
+
+    @Column(name = "overdueInterestPaid", precision = 18, scale = 2)
+    BigDecimal overdueInterestPaid;
+
+    @Column(name = "interestPaid", precision = 18, scale = 2)
+    BigDecimal interestPaid;
+
+    @Column(name = "principlePaid", precision = 18, scale = 2)
+    BigDecimal principlePaid;
+
 }

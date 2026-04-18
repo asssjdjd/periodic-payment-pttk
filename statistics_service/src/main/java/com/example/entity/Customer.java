@@ -10,7 +10,7 @@ import lombok.experimental.FieldDefaults;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "contract")
+@Table(name = "customer")
 @Getter
 @Setter
 @NoArgsConstructor

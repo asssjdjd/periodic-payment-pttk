@@ -12,5 +12,5 @@ import java.math.BigDecimal;
 public class PaymentRequest {
 
     private BigDecimal amount;
-    private Long scheduleId;
+    private String scheduleId;
 }

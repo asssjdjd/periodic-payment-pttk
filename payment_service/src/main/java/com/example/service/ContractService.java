@@ -10,5 +10,5 @@ import java.util.List;
 
 @Service
 public interface ContractService {
-    List<ContractResponse>getActiveContractsByCustomerId(Long customerId);
+    List<ContractResponse>getActiveContractsByCustomerId(String customerId);
 }

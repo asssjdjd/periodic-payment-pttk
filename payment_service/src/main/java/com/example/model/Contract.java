@@ -1,70 +1,67 @@
 package com.example.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.List;
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
-@Table(name = "Contract")
+@Table(name = "contract")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Contract extends BaseEntity{
+public class Contract{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customerId", nullable = false)
-    Customer customer;
+    @Column(name = "code", unique = true)
+    String code;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId", nullable = false)
-    User user;
+    @Column(name = "userId", nullable = false)
+    String userId;
 
-    // Map với bảng LoanOffer
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "loanProductsId", nullable = false)
-    LoanOffer loanOffer;
+    @Column(name = "customerId", nullable = false)
+    String customerId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "loanContractId")
-    private Contract parentContract;
+    @Column(name = "signedDate", nullable = false)
+    LocalDateTime signedDate;
+
+    @Column(name = "productPrice", nullable = false)
+    BigDecimal productPrice;
+
+    @Column(name = "prepaidAmount", nullable = false)
+    BigDecimal prepaidAmount;
 
     @Column(name = "loanAmount", nullable = false)
     BigDecimal loanAmount;
 
-    @Column(name = "code", nullable = false, unique = true)
-    private String code;
-
     @Column(name = "status", nullable = false)
     String status;
+    // COMPLETED,ACTIVE
 
-    @Column(name = "signedDate", nullable = false)
-    private LocalDate signedDate;
+    @Column(name = "loan_schedule_term_number")
+    int loanScheduleTermNumber;
 
-    @Column(name = "productPrice", nullable = false)
-    private BigDecimal productPrice;
+    @Column(name = "penalty_fee")
+    BigDecimal penaltyFee;
 
-    @Column(name = "prepaidAmount", nullable = false)
-    private BigDecimal prepaidAmount;
+    @Column(name = "principal_due_rate")
+    BigDecimal principalDueRate;
 
-    // Quan hệ 1-N với Tài sản thế chấp
-    @OneToMany(mappedBy = "contract", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonIgnore
-    List<Collateral> collaterals;
+    @Column(name = "interest_due_rate")
+    BigDecimal interestDueRate;
 
-    // Quan hệ 1-N với Contract
-    @OneToMany(mappedBy = "contract", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<LoanPaymentSchedule> paymentSchedules;
+    @Column(name = "overdue_interest_rate")
+    BigDecimal overdueInterestRate;
+
+
 }

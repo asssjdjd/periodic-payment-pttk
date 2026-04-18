@@ -4,6 +4,8 @@ package com.example.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "transactionloanpaymentschedule")
 @Getter
@@ -11,20 +13,14 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TransactionLoanPaymentSchedule {
+public class TransactionLoanPaymentSchedule extends BaseEntity{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "loanTransactionId", nullable = false)
-    private LoanTransaction loanTransaction;
+    @JoinColumn(name = "amount", nullable = false)
+    private BigDecimal amount;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "loanPaymentScheduleId", nullable = false)
-    private LoanPaymentSchedule loanPaymentSchedule;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "contractId", nullable = false)
-    private Contract contract;
+    @JoinColumn(name = "scheduleId", nullable = false)
+    private String scheduleId;
 }

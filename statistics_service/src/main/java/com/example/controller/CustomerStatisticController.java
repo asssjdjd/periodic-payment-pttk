@@ -22,7 +22,7 @@ public class CustomerStatisticController {
 
     private final CustomerStatisticService customerStatisticService;
 
-    @GetMapping("customer/outstanding-debt/detail")
+    @PostMapping("customer/outstanding-debt/detail")
     public ApiResponse getStatisticCustomer(@RequestBody StatisticCustomerRequest statisticCustomerRequest) {
 
         LocalDate fromDate = statisticCustomerRequest.getFromDate();

@@ -1,6 +1,5 @@
 package com.example.dto;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,7 +19,7 @@ public class LoanPaymentScheduleDto {
     BigDecimal overdueInterest;
     BigDecimal interestDue;
     BigDecimal principalDue;
-    BigDecimal penaltyDue;
+//    BigDecimal penaltyDue;
     String status;
     BigDecimal penaltyFeePaid;
     BigDecimal overdueInterestPaid;

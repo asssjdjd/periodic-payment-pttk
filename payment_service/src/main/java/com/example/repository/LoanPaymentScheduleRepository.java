@@ -7,13 +7,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface LoanPaymentScheduleRepository extends JpaRepository<LoanPaymentSchedule,Long> {
-    @Query("SELECT lps FROM LoanPaymentSchedule lps WHERE lps.contract.id = :contractId AND lps.status <> 'PAID'")
-    List<LoanPaymentSchedule> findAllByContractIdAndNotPaid(@Param("contractId") Long contractId);
+public interface LoanPaymentScheduleRepository extends JpaRepository<LoanPaymentSchedule,String> {
 
-    @Query("SELECT lps FROM LoanPaymentSchedule lps WHERE lps.contract.id = :contractId")
-    List<LoanPaymentSchedule> findAllByContractId(@Param("contractId") Long contractId);
+    List<LoanPaymentSchedule> findByContractId(String contractId);
+
+    // Bỏ JOIN FETCH s.contract vì nó không tồn tại
+    @Query("SELECT s FROM LoanPaymentSchedule s WHERE s.dueDate < :now AND s.status NOT IN ('PAID')")
+    List<LoanPaymentSchedule> findOverdueSchedules(@Param("now") LocalDateTime now);
 }
