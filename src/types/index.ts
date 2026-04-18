@@ -128,3 +128,37 @@ export interface CustomerDebtStatistic {
 export interface OutstandingDebtStatisticsData {
   customerStatistics: CustomerDebtStatistic[];
 }
+
+// Supplier Types
+export interface Supplier {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  taxCode: string;
+  deletedAt?: string | null;
+  status?: string;
+}
+
+export interface UpdateSupplierRequest {
+  name: string;
+  email: string;
+  phone: string;
+  taxCode: string;
+  status: string;
+}
+
+export interface SupplierProduct {
+  id: string;
+  name: string;
+  status: string;
+}
+
+export interface ImportOrder {
+  id: string;
+  supplierId: string;
+  supplierName: string;
+  totalAmount: number;
+  status: string;
+  importDate: string | null;
+}

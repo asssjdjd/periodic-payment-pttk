@@ -1,0 +1,157 @@
+curl --location 'http://localhost:8083/api/v1/suppliers' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+           "name": "Công ty B",
+           "email": "companyB@abc-tech.com",
+           "phone": "0987651987",
+           "taxCode": "MS123459768"
+ }'
+
+ {
+    "code": 200,
+    "message": "Tạo thành công nhà cung cấp mới",
+    "data": {
+        "id": "f6c24e80-bd18-4b7c-b324-3c8394118191",
+        "name": "Công ty B",
+        "email": "companyB@abc-tech.com",
+        "phone": "0987651987",
+        "taxCode": "MS123459768"
+    }
+}
+--------
+curl --location 'http://localhost:8083/api/v1/suppliers'
+{
+    "code": 200,
+    "message": "Lấy danh sách nhà cung cấp thành công",
+    "data": [
+        {
+            "id": "5b0b0f6f-54eb-4bb3-9520-be3fb9eaa02b",
+            "name": "Công ty A",
+            "email": "companyA@abc-tech.com",
+            "phone": "0987651234",
+            "taxCode": "MS123459867"
+        },
+        {
+            "id": "dcff4bab-be6f-4db5-9e4d-0ad0cda1caa6",
+            "name": "Công ty TNHH Giải pháp Công nghệ ABC",
+            "email": "contact@abc-tech.com",
+            "phone": "0987654321",
+            "taxCode": "MS123456789"
+        },
+        {
+            "id": "f6c24e80-bd18-4b7c-b324-3c8394118191",
+            "name": "Công ty C",
+            "email": "companyC@abc-tech.com",
+            "phone": "0987651987",
+            "taxCode": "MS123459768"
+        }
+    ]
+}
+
+-------------------
+curl --location --request PUT 'http://localhost:8083/api/v1/suppliers/f6c24e80-bd18-4b7c-b324-3c8394118191' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+           "name": "Công ty C",
+           "email": "companyC@abc-tech.com",
+           "phone": "0987651987",
+           "taxCode": "MS123459768"
+ }'
+
+ {
+    "code": 200,
+    "message": "Cập nhật nhà cung cấp thành công",
+    "data": {
+        "id": "f6c24e80-bd18-4b7c-b324-3c8394118191",
+        "name": "Công ty C",
+        "email": "companyC@abc-tech.com",
+        "phone": "0987651987",
+        "taxCode": "MS123459768"
+    }
+}
+
+-----------------------------
+
+curl --location --request DELETE 'http://localhost:8083/api/v1/suppliers/f6c24e80-bd18-4b7c-b324-3c8394118191'
+
+{
+    "code": 200,
+    "message": "Xóa nhà cung cấp thành công",
+    "data": null
+}
+
+-------------------------------------
+
+curl --location 'http://localhost:8083/api/v1/suppliers/dcff4bab-be6f-4db5-9e4d-0ad0cda1caa6/products' \
+--header 'Accept: application/json'
+
+
+{
+    "code": 200,
+    "message": "Lấy danh sách sản phẩm của nhà cung cấp thành công",
+    "data": [
+        {
+            "id": "prod-001",
+            "name": "iPhone 15 Pro Max 256GB",
+            "status": "ACTIVE"
+        },
+        {
+            "id": "prod-002",
+            "name": "MacBook Pro M3 14 inch",
+            "status": "ACTIVE"
+        },
+        {
+            "id": "prod-003",
+            "name": "Samsung Galaxy S24 Ultra 512GB",
+            "status": "ACTIVE"
+        }
+    ]
+}
+
+----------------------
+
+curl --location 'http://localhost:8083/api/v1/import-orders/pending?name=C%C3%B4ng%20ty%20A' \
+--header 'Accept: application/json'
+
+{
+    "code": 200,
+    "message": "Lấy danh sách đơn chờ xác nhận thành công",
+    "data": [
+        {
+            "id": "ord-A-3",
+            "supplierId": "5b0b0f6f-54eb-4bb3-9520-be3fb9eaa02b",
+            "supplierName": "Công ty A",
+            "totalAmount": 400000000.00,
+            "status": "PENDING",
+            "importDate": null
+        }
+    ]
+}
+
+------------------------------------ 
+
+curl --location 'http://localhost:8083/api/v1/import-orders/completed?name=ABC' \
+--header 'Accept: application/json'
+
+{
+    "code": 200,
+    "message": "Lấy danh sách đơn đã nhập kho thành công",
+    "data": [
+        {
+            "id": "ord-B-1",
+            "supplierId": "dcff4bab-be6f-4db5-9e4d-0ad0cda1caa6",
+            "supplierName": "Công ty TNHH Giải pháp Công nghệ ABC",
+            "totalAmount": 315000000.00,
+            "status": "COMPLETED",
+            "importDate": "2026-04-05"
+        },
+        {
+            "id": "ord-B-2",
+            "supplierId": "dcff4bab-be6f-4db5-9e4d-0ad0cda1caa6",
+            "supplierName": "Công ty TNHH Giải pháp Công nghệ ABC",
+            "totalAmount": 204000000.00,
+            "status": "COMPLETED",
+            "importDate": "2026-04-12"
+        }
+    ]
+}

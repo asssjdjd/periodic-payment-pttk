@@ -3,6 +3,7 @@ import type { Customer, Contract } from './types';
 import SearchCustomer from './components/SearchCustomer';
 import ContractList from './components/ContractList';
 import PaymentSchedule from './components/PaymentSchedule';
+import SupplierManagement from './components/SupplierManagement';
 import './App.css';
 
 
@@ -13,11 +14,15 @@ function App() {
   const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
   const [paymentCompleted, setPaymentCompleted] = useState(false);
   const [showDebtStatistics, setShowDebtStatistics] = useState(false);
+  const [showSupplierManagement, setShowSupplierManagement] = useState(false);
+  const [showContractPaymentSearch, setShowContractPaymentSearch] = useState(false);
 
   const handleCustomerSelect = (customer: Customer) => {
     setSelectedCustomer(customer);
     setSelectedContract(null);
     setShowDebtStatistics(false);
+    setShowSupplierManagement(false);
+    setShowContractPaymentSearch(true);
   };
 
   const handleContractSelect = (contract: Contract) => {
@@ -35,6 +40,10 @@ function App() {
       setSelectedCustomer(null);
     } else if (showDebtStatistics) {
       setShowDebtStatistics(false);
+    } else if (showSupplierManagement) {
+      setShowSupplierManagement(false);
+    } else if (showContractPaymentSearch) {
+      setShowContractPaymentSearch(false);
     }
   };
 
@@ -46,18 +55,54 @@ function App() {
       </header>
 
       <main className="app-main">
-        {!selectedCustomer && !showDebtStatistics ? (
+        {!selectedCustomer && !showDebtStatistics && !showSupplierManagement ? (
           <>
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
+            <div className="home-action-buttons">
               <button
-                style={{ marginRight: 16, padding: '0.75rem 1.5rem', fontWeight: 600, fontSize: 16 }}
-                onClick={() => setShowDebtStatistics(true)}
+                className="home-action-btn payment"
+                onClick={() => {
+                  setShowContractPaymentSearch(true);
+                  setShowDebtStatistics(false);
+                  setShowSupplierManagement(false);
+                }}
+              >
+                Thanh Toán Hợp Đồng
+              </button>
+              <button
+                className="home-action-btn"
+                onClick={() => {
+                  setShowDebtStatistics(true);
+                  setShowSupplierManagement(false);
+                  setShowContractPaymentSearch(false);
+                }}
               >
                 Xem Thống Kê Dư Nợ
               </button>
+              <button
+                className="home-action-btn supplier"
+                onClick={() => {
+                  setShowSupplierManagement(true);
+                  setShowDebtStatistics(false);
+                  setShowContractPaymentSearch(false);
+                  setSelectedCustomer(null);
+                  setSelectedContract(null);
+                }}
+              >
+                Quản Lý Nhà Cung Cấp
+              </button>
             </div>
-            <SearchCustomer onCustomerSelect={handleCustomerSelect} />
+            {showContractPaymentSearch && <SearchCustomer onCustomerSelect={handleCustomerSelect} />}
           </>
+        ) : showSupplierManagement ? (
+          <div className="view-container">
+            <div className="view-header">
+              <h2>Quản Lý Nhà Cung Cấp</h2>
+              <button onClick={handleBack} className="back-btn">
+                ← Quay Lại
+              </button>
+            </div>
+            <SupplierManagement />
+          </div>
         ) : showDebtStatistics ? (
           <div className="view-container">
             <div className="view-header">

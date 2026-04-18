@@ -7,11 +7,16 @@ import type {
   LoanPaymentSchedule,
   PaymentRequest,
   OutstandingDebtStatisticsData,
+  Supplier,
+  UpdateSupplierRequest,
+  ImportOrder,
+  SupplierProduct,
 } from '../types';
 
 const USER_SERVICE_URL = 'http://localhost:8082/api/v1';
 const PAYMENT_SERVICE_URL = 'http://localhost:8080/api/v1';
 const STATISTICS_SERVICE_URL = 'http://localhost:8081/api/v1';
+const SUPPLIER_SERVICE_URL = 'http://localhost:8083/api/v1';
 
 const userServiceInstance: AxiosInstance = axios.create({
   baseURL: USER_SERVICE_URL,
@@ -34,11 +39,23 @@ const statisticsServiceInstance: AxiosInstance = axios.create({
   },
 });
 
+const supplierServiceInstance: AxiosInstance = axios.create({
+  baseURL: SUPPLIER_SERVICE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
 const normalizeSchedule = (schedule: LoanPaymentSchedule): LoanPaymentSchedule => ({
   ...schedule,
   penaltyDue: schedule.penaltyDue ?? schedule.penaltyFee ?? 0,
   overduePrinciple: schedule.overduePrinciple ?? 0,
   overduePrinciplePaid: schedule.overduePrinciplePaid ?? 0,
+});
+
+const normalizeSupplier = (supplier: Supplier): Supplier => ({
+  ...supplier,
+  status: supplier.deletedAt == null ? 'ACTIVE' : 'INACTIVE',
 });
 
 export const customerApi = {
@@ -93,6 +110,57 @@ export const statisticsApi = {
       maxDebt: null
     })
       .then((res: AxiosResponse<ApiResponse<OutstandingDebtStatisticsData>>) => res.data),
+};
+
+export const supplierApi = {
+  getSuppliers: (): Promise<ApiResponse<Supplier[]>> =>
+    supplierServiceInstance
+      .get('/suppliers')
+      .then((res: AxiosResponse<ApiResponse<Supplier[]>>) => ({
+        ...res.data,
+        data: res.data.data.map(normalizeSupplier),
+      })),
+
+  updateSupplier: (
+    supplierId: string,
+    request: UpdateSupplierRequest
+  ): Promise<ApiResponse<Supplier>> =>
+    supplierServiceInstance
+      .put(`/suppliers/${supplierId}`, {
+        ...request,
+        status: request.status || 'ACTIVE',
+      })
+      .then((res: AxiosResponse<ApiResponse<Supplier>>) => ({
+        ...res.data,
+        data: normalizeSupplier({
+          ...res.data.data,
+          status: request.status,
+        }),
+      })),
+
+  deleteSupplier: (supplierId: string): Promise<ApiResponse<null>> =>
+    supplierServiceInstance
+      .delete(`/suppliers/${supplierId}`)
+      .then((res: AxiosResponse<ApiResponse<null>>) => res.data),
+
+  getSupplierProducts: (supplierId: string): Promise<ApiResponse<SupplierProduct[]>> =>
+    supplierServiceInstance
+      .get(`/suppliers/${supplierId}/products`)
+      .then((res: AxiosResponse<ApiResponse<SupplierProduct[]>>) => res.data),
+
+  getPendingImportOrders: (supplierName: string): Promise<ApiResponse<ImportOrder[]>> =>
+    supplierServiceInstance
+      .get('/import-orders/pending', {
+        params: { name: supplierName },
+      })
+      .then((res: AxiosResponse<ApiResponse<ImportOrder[]>>) => res.data),
+
+  getCompletedImportOrders: (supplierName: string): Promise<ApiResponse<ImportOrder[]>> =>
+    supplierServiceInstance
+      .get('/import-orders/completed', {
+        params: { name: supplierName },
+      })
+      .then((res: AxiosResponse<ApiResponse<ImportOrder[]>>) => res.data),
 };
 
 export default paymentServiceInstance;
