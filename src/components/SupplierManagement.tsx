@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { supplierApi } from '../api/client';
-import type { ImportOrder, Supplier, SupplierProduct, UpdateSupplierRequest } from '../types';
+import type {
+  CreateSupplierRequest,
+  ImportOrder,
+  Supplier,
+  SupplierProduct,
+  UpdateSupplierRequest,
+} from '../types';
 import '../styles/SupplierManagement.css';
 
 const defaultForm: UpdateSupplierRequest = {
@@ -11,10 +17,18 @@ const defaultForm: UpdateSupplierRequest = {
   status: 'ACTIVE',
 };
 
+const defaultCreateForm: CreateSupplierRequest = {
+  name: '',
+  email: '',
+  phone: '',
+  taxCode: '',
+};
+
 export default function SupplierManagement() {
   const [suppliers, setSuppliers] = useState<Supplier[]>([]);
   const [selectedSupplier, setSelectedSupplier] = useState<Supplier | null>(null);
   const [formData, setFormData] = useState<UpdateSupplierRequest>(defaultForm);
+  const [createFormData, setCreateFormData] = useState<CreateSupplierRequest>(defaultCreateForm);
   const [products, setProducts] = useState<SupplierProduct[]>([]);
   const [pendingOrders, setPendingOrders] = useState<ImportOrder[]>([]);
   const [completedOrders, setCompletedOrders] = useState<ImportOrder[]>([]);
@@ -145,6 +159,52 @@ export default function SupplierManagement() {
     }));
   };
 
+  const handleCreateFormChange = (key: keyof CreateSupplierRequest, value: string) => {
+    setCreateFormData((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  const handleCreateSupplier = async () => {
+    if (
+      !createFormData.name.trim() ||
+      !createFormData.email.trim() ||
+      !createFormData.phone.trim() ||
+      !createFormData.taxCode.trim()
+    ) {
+      setError('Vui lòng nhập đầy đủ thông tin để thêm mới nhà cung cấp');
+      return;
+    }
+
+    setSubmitting(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const response = await supplierApi.createSupplier({
+        name: createFormData.name.trim(),
+        email: createFormData.email.trim(),
+        phone: createFormData.phone.trim(),
+        taxCode: createFormData.taxCode.trim(),
+      });
+
+      if (response.code === 200) {
+        setSuccess('Thêm mới nhà cung cấp thành công');
+        setCreateFormData(defaultCreateForm);
+        await loadSuppliers();
+        setSelectedSupplier(response.data);
+      } else {
+        setError(response.message || 'Thêm mới nhà cung cấp thất bại');
+      }
+    } catch (err) {
+      setError('Không thể thêm mới nhà cung cấp');
+      console.error(err);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const handleUpdate = async () => {
     if (!selectedSupplier) return;
 
@@ -272,6 +332,54 @@ export default function SupplierManagement() {
 
       <div className="supplier-layout">
         <section className="supplier-list-panel">
+          <div className="create-supplier-box">
+            <h4>Thêm nhà cung cấp mới</h4>
+            <div className="create-form-grid">
+              <label>
+                Tên nhà cung cấp
+                <input
+                  type="text"
+                  value={createFormData.name}
+                  onChange={(e) => handleCreateFormChange('name', e.target.value)}
+                  placeholder="VD: Công ty B"
+                />
+              </label>
+
+              <label>
+                Email
+                <input
+                  type="email"
+                  value={createFormData.email}
+                  onChange={(e) => handleCreateFormChange('email', e.target.value)}
+                  placeholder="VD: companyB@abc-tech.com"
+                />
+              </label>
+
+              <label>
+                Số điện thoại
+                <input
+                  type="text"
+                  value={createFormData.phone}
+                  onChange={(e) => handleCreateFormChange('phone', e.target.value)}
+                  placeholder="VD: 0987651987"
+                />
+              </label>
+
+              <label>
+                Mã số thuế
+                <input
+                  type="text"
+                  value={createFormData.taxCode}
+                  onChange={(e) => handleCreateFormChange('taxCode', e.target.value)}
+                  placeholder="VD: MS123459768"
+                />
+              </label>
+            </div>
+            <button onClick={handleCreateSupplier} disabled={submitting || loadingSuppliers}>
+              Thêm mới nhà cung cấp
+            </button>
+          </div>
+
           <div className="panel-header">
             <h4>Danh sách nhà cung cấp</h4>
             <button onClick={() => loadSuppliers(false)} disabled={loadingSuppliers || submitting}>

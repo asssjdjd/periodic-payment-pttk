@@ -148,6 +148,13 @@ export interface UpdateSupplierRequest {
   status: string;
 }
 
+export interface CreateSupplierRequest {
+  name: string;
+  email: string;
+  phone: string;
+  taxCode: string;
+}
+
 export interface SupplierProduct {
   id: string;
   name: string;

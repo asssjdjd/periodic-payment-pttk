@@ -8,6 +8,7 @@ import type {
   PaymentRequest,
   OutstandingDebtStatisticsData,
   Supplier,
+  CreateSupplierRequest,
   UpdateSupplierRequest,
   ImportOrder,
   SupplierProduct,
@@ -113,6 +114,14 @@ export const statisticsApi = {
 };
 
 export const supplierApi = {
+  createSupplier: (request: CreateSupplierRequest): Promise<ApiResponse<Supplier>> =>
+    supplierServiceInstance
+      .post('/suppliers', request)
+      .then((res: AxiosResponse<ApiResponse<Supplier>>) => ({
+        ...res.data,
+        data: normalizeSupplier(res.data.data),
+      })),
+
   getSuppliers: (): Promise<ApiResponse<Supplier[]>> =>
     supplierServiceInstance
       .get('/suppliers')
