@@ -14,4 +14,5 @@ public class UpdateSupplierRequest {
     private String email;
     private String phone;
     private String taxCode;
+    private String status;
 }

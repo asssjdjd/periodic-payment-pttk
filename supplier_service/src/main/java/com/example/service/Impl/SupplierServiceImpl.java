@@ -46,7 +46,7 @@ public class SupplierServiceImpl implements SupplierService {
         List<Supplier> suppliers = supplierRepository.findAll();
 
         return suppliers.stream()
-                .filter(s -> s.getDeletedAt() == null) // Bỏ qua các bản ghi đã xóa mềm
+//                .filter(s -> s.getDeletedAt() == null) // Bỏ qua các bản ghi đã xóa mềm
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
@@ -63,6 +63,10 @@ public class SupplierServiceImpl implements SupplierService {
         existingSupplier.setPhone(request.getPhone());
         existingSupplier.setTaxCode(request.getTaxCode());
         existingSupplier.setUpdatedAt(LocalDateTime.now()); // Cập nhật thời gian sửa
+
+        if(request.getStatus().equals("ACTIVE")) {
+            existingSupplier.setDeletedAt(null);
+        }
 
         Supplier updatedSupplier = supplierRepository.save(existingSupplier);
         log.info("[Supplier Service] [SupplierServiceImpl] : Cập nhật thành công nhà cung cấp ID: {}", id);
@@ -91,6 +95,7 @@ public class SupplierServiceImpl implements SupplierService {
                 .taxCode(supplier.getTaxCode())
                 .phone(supplier.getPhone())
                 .name(supplier.getName())
+                .deletedAt(supplier.getDeletedAt())
                 .build();
     }
 
