@@ -1,0 +1,77 @@
+USE `LoanManagementSystem`;
+
+-- ==========================================
+-- 1. TẠO DỮ LIỆU GỐC (Master Data)
+-- ==========================================
+
+-- Tạo 1 User hệ thống quản lý khoản vay
+INSERT INTO `User` (`id`, `username`, `password`, `email`, `country`, `role`) 
+VALUES 
+('USR-001', 'B22DCCN505', '$2y$10$hashedpasswordstring', 'longpt@student.ptit.edu.vn', 'Vietnam', 'ADMIN');
+
+-- Tạo 1 Khách hàng vay vốn
+INSERT INTO `Customer` (`id`, `fullName`, `phoneNumber`, `status`) 
+VALUES 
+('CUS-001', 'Phạm Thành Long', '0987654321', 'ACTIVE');
+
+-- Tạo 1 Sản phẩm vay (Ví dụ: Gói vay sinh viên)
+INSERT INTO `Product` (`id`, `name`, `importPrice`, `sellingPrice`, `status`) 
+VALUES 
+('PROD-001', 'Gói Vay Sinh Viên PTIT', 0, 15000000.00, 'ACTIVE');
+
+
+-- ==========================================
+-- 2. TẠO HỢP ĐỒNG (Contract)
+-- ==========================================
+
+-- Tạo Hợp đồng vay dựa trên Khách hàng và Sản phẩm ở trên
+-- Giả sử hợp đồng ký trước kỳ trả nợ đầu tiên 1 tháng (2026-01-18)
+INSERT INTO `Contract` (
+    `id`, `code`, `signedDate`, `productPrice`, `prepaid`, `status`, 
+    `penaltyFee`, `loanScheduleTermNumber`, `principalDueRate`, 
+    `interestDueRate`, `overdueInterestRate`, `CustomerId`
+) VALUES (
+    'HD-001', 'HD-B22DCCN505-2026', '2026-01-18', 15000000.00, 0.00, 'ONGOING', 
+    0.00, 3, 33.33, 5.00, 0.00, 'CUS-001'
+);
+
+
+-- ==========================================
+-- 3. TẠO LỊCH TRẢ NỢ (LoanPaymentSchedule)
+-- ==========================================
+
+-- Tạo 3 kỳ thanh toán cho Hợp đồng HD-001
+-- Mỗi kỳ trả gốc 5.000.000đ, lãi 250.000đ. Phí phạt và quá hạn = 0.
+INSERT INTO `LoanPaymentSchedule` (
+    `id`, `ContractId`, `termNo`, `dueDate`, 
+    `penaltyFee`, `interestDue`, `pricipalDue`, 
+    `interestOverdue`, `principalOverdue`, 
+    `penaltyFeePaid`, `interestOverduePaid`, `interestPaid`, `principalPaid`, 
+    `status`
+) VALUES 
+-- Kỳ 1: Hết hạn ngày 18/02/2026
+(
+    'SCH-001-TERM1', 'HD-001', 1, '2026-02-18', 
+    0.00, 250000.00, 5000000.00, 
+    0.00, 0.00, 
+    0.00, 0.00, 0.00, 0.00, 
+    'PENDING'
+),
+
+-- Kỳ 2: Hết hạn ngày 18/03/2026
+(
+    'SCH-001-TERM2', 'HD-001', 2, '2026-03-18', 
+    0.00, 250000.00, 5000000.00, 
+    0.00, 0.00, 
+    0.00, 0.00, 0.00, 0.00, 
+    'PENDING'
+),
+
+-- Kỳ 3: Hết hạn ngày 18/04/2026
+(
+    'SCH-001-TERM3', 'HD-001', 3, '2026-04-18', 
+    0.00, 250000.00, 5000000.00, 
+    0.00, 0.00, 
+    0.00, 0.00, 0.00, 0.00, 
+    'PENDING'
+);

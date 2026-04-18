@@ -1,0 +1,394 @@
+curl --location --request GET 'http://localhost:8081/api/v1/statistics/customer/outstanding-debt/detail' \
+--header 'Content-Type: application/json' \
+--data '{
+}'
+
+
+
+{
+    "code": 200,
+    "message": "Lấy thông tin dư nợ khách hàng thành công",
+    "data": {
+        "customerStatistics": [
+            {
+                "contracts": [
+                    {
+                        "loanPaymentSchedules": [
+                            {
+                                "termNo": 1,
+                                "dueDate": "2026-03-15T00:00:00",
+                                "penaltyFee": 100000.00,
+                                "overdueInterest": 0.00,
+                                "interestDue": 113333.33,
+                                "principalDue": 5666666.67,
+                                "status": "PAID",
+                                "penaltyFeePaid": 0.00,
+                                "overdueInterestPaid": 0.00,
+                                "interestPaid": 113333.33,
+                                "principlePaid": 5666666.67
+                            },
+                            {
+                                "termNo": 2,
+                                "dueDate": "2026-04-15T10:38:06",
+                                "penaltyFee": 100000.00,
+                                "overdueInterest": 0.00,
+                                "interestDue": 113333.33,
+                                "principalDue": 5666666.67,
+                                "status": "PENDING",
+                                "penaltyFeePaid": 0.00,
+                                "overdueInterestPaid": 0.00,
+                                "interestPaid": 113333.33,
+                                "principlePaid": 962333.67
+                            },
+                            {
+                                "termNo": 3,
+                                "dueDate": "2026-05-15T00:00:00",
+                                "penaltyFee": 100000.00,
+                                "overdueInterest": 0.00,
+                                "interestDue": 113333.33,
+                                "principalDue": 5666666.67,
+                                "status": "PENDING",
+                                "penaltyFeePaid": 0.00,
+                                "overdueInterestPaid": 0.00,
+                                "interestPaid": 0.00,
+                                "principlePaid": 0.00
+                            }
+                        ],
+                        "signDate": "2026-01-05T08:30:00",
+                        "overdue": 0,
+                        "penalty": 0,
+                        "debt": 10484333.00,
+                        "principleRemaining": 10370999.67,
+                        "interestRemaining": 113333.33
+                    },
+                    {
+                        "loanPaymentSchedules": [
+                            {
+                                "termNo": 1,
+                                "dueDate": "2026-03-15T00:00:00",
+                                "penaltyFee": 100000.00,
+                                "overdueInterest": 0.00,
+                                "interestDue": 93333.33,
+                                "principalDue": 4666666.67,
+                                "status": "PAID",
+                                "penaltyFeePaid": 0.00,
+                                "overdueInterestPaid": 0.00,
+                                "interestPaid": 93333.33,
+                                "principlePaid": 4666666.67
+                            },
+                            {
+                                "termNo": 2,
+                                "dueDate": "2026-04-15T00:00:00",
+                                "penaltyFee": 100000.00,
+                                "overdueInterest": 0.00,
+                                "interestDue": 93333.33,
+                                "principalDue": 4666666.67,
+                                "status": "PENDING",
+                                "penaltyFeePaid": 0.00,
+                                "overdueInterestPaid": 0.00,
+                                "interestPaid": 0.00,
+                                "principlePaid": 0.00
+                            },
+                            {
+                                "termNo": 3,
+                                "dueDate": "2026-05-15T00:00:00",
+                                "penaltyFee": 100000.00,
+                                "overdueInterest": 0.00,
+                                "interestDue": 93333.33,
+                                "principalDue": 4666666.67,
+                                "status": "PENDING",
+                                "penaltyFeePaid": 0.00,
+                                "overdueInterestPaid": 0.00,
+                                "interestPaid": 0.00,
+                                "principlePaid": 0.00
+                            }
+                        ],
+                        "signDate": "2026-01-10T09:00:00",
+                        "overdue": 0,
+                        "penalty": 0,
+                        "debt": 9520000.00,
+                        "principleRemaining": 9333333.34,
+                        "interestRemaining": 186666.66
+                    },
+                    {
+                        "loanPaymentSchedules": [
+                            {
+                                "termNo": 1,
+                                "dueDate": "2026-03-15T00:00:00",
+                                "penaltyFee": 100000.00,
+                                "overdueInterest": 0.00,
+                                "interestDue": 40000.00,
+                                "principalDue": 2000000.00,
+                                "status": "PAID",
+                                "penaltyFeePaid": 0.00,
+                                "overdueInterestPaid": 0.00,
+                                "interestPaid": 40000.00,
+                                "principlePaid": 2000000.00
+                            },
+                            {
+                                "termNo": 2,
+                                "dueDate": "2026-04-15T00:00:00",
+                                "penaltyFee": 100000.00,
+                                "overdueInterest": 0.00,
+                                "interestDue": 40000.00,
+                                "principalDue": 2000000.00,
+                                "status": "PENDING",
+                                "penaltyFeePaid": 0.00,
+                                "overdueInterestPaid": 0.00,
+                                "interestPaid": 0.00,
+                                "principlePaid": 0.00
+                            },
+                            {
+                                "termNo": 3,
+                                "dueDate": "2026-05-15T00:00:00",
+                                "penaltyFee": 100000.00,
+                                "overdueInterest": 0.00,
+                                "interestDue": 40000.00,
+                                "principalDue": 2000000.00,
+                                "status": "PENDING",
+                                "penaltyFeePaid": 0.00,
+                                "overdueInterestPaid": 0.00,
+                                "interestPaid": 0.00,
+                                "principlePaid": 0.00
+                            }
+                        ],
+                        "signDate": "2026-01-15T10:00:00",
+                        "overdue": 0,
+                        "penalty": 0,
+                        "debt": 4080000.00,
+                        "principleRemaining": 4000000.00,
+                        "interestRemaining": 80000.00
+                    }
+                ],
+                "totalDebt": 24084333.00,
+                "totalInterestRemaining": 379999.99,
+                "totalPrincipleRemaining": 23704333.01,
+                "totalPenalty": 0,
+                "totalOverdue": 0,
+                "customerId": null,
+                "customerName": "Phạm Văn Đức",
+                "customerPhone": "0934567890"
+            },
+            {
+                "contracts": [
+                    {
+                        "loanPaymentSchedules": [
+                            {
+                                "termNo": 1,
+                                "dueDate": "2026-03-20T00:00:00",
+                                "penaltyFee": 100000.00,
+                                "overdueInterest": 0.00,
+                                "interestDue": 100000.00,
+                                "principalDue": 5000000.00,
+                                "status": "PAID",
+                                "penaltyFeePaid": 0.00,
+                                "overdueInterestPaid": 0.00,
+                                "interestPaid": 100000.00,
+                                "principlePaid": 5000000.00
+                            },
+                            {
+                                "termNo": 2,
+                                "dueDate": "2026-04-20T00:00:00",
+                                "penaltyFee": 100000.00,
+                                "overdueInterest": 0.00,
+                                "interestDue": 100000.00,
+                                "principalDue": 5000000.00,
+                                "status": "PENDING",
+                                "penaltyFeePaid": 0.00,
+                                "overdueInterestPaid": 0.00,
+                                "interestPaid": 0.00,
+                                "principlePaid": 0.00
+                            },
+                            {
+                                "termNo": 3,
+                                "dueDate": "2026-05-20T00:00:00",
+                                "penaltyFee": 100000.00,
+                                "overdueInterest": 0.00,
+                                "interestDue": 100000.00,
+                                "principalDue": 5000000.00,
+                                "status": "PENDING",
+                                "penaltyFeePaid": 0.00,
+                                "overdueInterestPaid": 0.00,
+                                "interestPaid": 0.00,
+                                "principlePaid": 0.00
+                            }
+                        ],
+                        "signDate": "2026-01-20T08:00:00",
+                        "overdue": 0,
+                        "penalty": 0,
+                        "debt": 10200000.00,
+                        "principleRemaining": 10000000.00,
+                        "interestRemaining": 200000.00
+                    },
+                    {
+                        "loanPaymentSchedules": [
+                            {
+                                "termNo": 1,
+                                "dueDate": "2026-03-25T00:00:00",
+                                "penaltyFee": 100000.00,
+                                "overdueInterest": 0.00,
+                                "interestDue": 66666.00,
+                                "principalDue": 3333333.33,
+                                "status": "PAID",
+                                "penaltyFeePaid": 0.00,
+                                "overdueInterestPaid": 0.00,
+                                "interestPaid": 66666.00,
+                                "principlePaid": 3333333.33
+                            },
+                            {
+                                "termNo": 2,
+                                "dueDate": "2026-04-25T00:00:00",
+                                "penaltyFee": 100000.00,
+                                "overdueInterest": 0.00,
+                                "interestDue": 66666.00,
+                                "principalDue": 3333333.33,
+                                "status": "PENDING",
+                                "penaltyFeePaid": 0.00,
+                                "overdueInterestPaid": 0.00,
+                                "interestPaid": 0.00,
+                                "principlePaid": 0.00
+                            },
+                            {
+                                "termNo": 3,
+                                "dueDate": "2026-05-25T00:00:00",
+                                "penaltyFee": 100000.00,
+                                "overdueInterest": 0.00,
+                                "interestDue": 66666.00,
+                                "principalDue": 3333333.33,
+                                "status": "PENDING",
+                                "penaltyFeePaid": 0.00,
+                                "overdueInterestPaid": 0.00,
+                                "interestPaid": 0.00,
+                                "principlePaid": 0.00
+                            }
+                        ],
+                        "signDate": "2026-01-25T09:30:00",
+                        "overdue": 0,
+                        "penalty": 0,
+                        "debt": 6799998.66,
+                        "principleRemaining": 6666666.66,
+                        "interestRemaining": 133332.00
+                    }
+                ],
+                "totalDebt": 16999998.66,
+                "totalInterestRemaining": 333332.00,
+                "totalPrincipleRemaining": 16666666.66,
+                "totalPenalty": 0,
+                "totalOverdue": 0,
+                "customerId": null,
+                "customerName": "Hoàng Thị Em",
+                "customerPhone": "0945678901"
+            },
+            {
+                "contracts": [
+                    {
+                        "loanPaymentSchedules": [
+                            {
+                                "termNo": 1,
+                                "dueDate": "2026-04-01T00:00:00",
+                                "penaltyFee": 100000.00,
+                                "overdueInterest": 0.00,
+                                "interestDue": 80000.00,
+                                "principalDue": 4000000.00,
+                                "status": "PAID",
+                                "penaltyFeePaid": 0.00,
+                                "overdueInterestPaid": 0.00,
+                                "interestPaid": 80000.00,
+                                "principlePaid": 4000000.00
+                            },
+                            {
+                                "termNo": 2,
+                                "dueDate": "2026-05-01T00:00:00",
+                                "penaltyFee": 100000.00,
+                                "overdueInterest": 0.00,
+                                "interestDue": 80000.00,
+                                "principalDue": 4000000.00,
+                                "status": "PENDING",
+                                "penaltyFeePaid": 0.00,
+                                "overdueInterestPaid": 0.00,
+                                "interestPaid": 0.00,
+                                "principlePaid": 0.00
+                            },
+                            {
+                                "termNo": 3,
+                                "dueDate": "2026-06-01T00:00:00",
+                                "penaltyFee": 100000.00,
+                                "overdueInterest": 0.00,
+                                "interestDue": 80000.00,
+                                "principalDue": 4000000.00,
+                                "status": "PENDING",
+                                "penaltyFeePaid": 0.00,
+                                "overdueInterestPaid": 0.00,
+                                "interestPaid": 0.00,
+                                "principlePaid": 0.00
+                            }
+                        ],
+                        "signDate": "2026-02-01T08:00:00",
+                        "overdue": 0,
+                        "penalty": 0,
+                        "debt": 8160000.00,
+                        "principleRemaining": 8000000.00,
+                        "interestRemaining": 160000.00
+                    },
+                    {
+                        "loanPaymentSchedules": [
+                            {
+                                "termNo": 1,
+                                "dueDate": "2026-04-05T00:00:00",
+                                "penaltyFee": 100000.00,
+                                "overdueInterest": 0.00,
+                                "interestDue": 60000.00,
+                                "principalDue": 3000000.00,
+                                "status": "PAID",
+                                "penaltyFeePaid": 0.00,
+                                "overdueInterestPaid": 0.00,
+                                "interestPaid": 60000.00,
+                                "principlePaid": 3000000.00
+                            },
+                            {
+                                "termNo": 2,
+                                "dueDate": "2026-05-05T00:00:00",
+                                "penaltyFee": 100000.00,
+                                "overdueInterest": 0.00,
+                                "interestDue": 60000.00,
+                                "principalDue": 3000000.00,
+                                "status": "PENDING",
+                                "penaltyFeePaid": 0.00,
+                                "overdueInterestPaid": 0.00,
+                                "interestPaid": 0.00,
+                                "principlePaid": 0.00
+                            },
+                            {
+                                "termNo": 3,
+                                "dueDate": "2026-06-05T00:00:00",
+                                "penaltyFee": 100000.00,
+                                "overdueInterest": 0.00,
+                                "interestDue": 60000.00,
+                                "principalDue": 3000000.00,
+                                "status": "PENDING",
+                                "penaltyFeePaid": 0.00,
+                                "overdueInterestPaid": 0.00,
+                                "interestPaid": 0.00,
+                                "principlePaid": 0.00
+                            }
+                        ],
+                        "signDate": "2026-02-05T10:00:00",
+                        "overdue": 0,
+                        "penalty": 0,
+                        "debt": 6120000.00,
+                        "principleRemaining": 6000000.00,
+                        "interestRemaining": 120000.00
+                    }
+                ],
+                "totalDebt": 14280000.00,
+                "totalInterestRemaining": 280000.00,
+                "totalPrincipleRemaining": 14000000.00,
+                "totalPenalty": 0,
+                "totalOverdue": 0,
+                "customerId": null,
+                "customerName": "Vũ Quốc Phong",
+                "customerPhone": "0956789012"
+            }
+        ]
+    }
+}

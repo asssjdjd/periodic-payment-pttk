@@ -1,0 +1,191 @@
+
+
+-- Tạo db tên 'periodic-payment' nếu chưa tồn tại
+
+CREATE TABLE IF NOT EXISTS `User` (
+    `id` VARCHAR(255) NOT NULL,
+    `username` VARCHAR(255) NOT NULL, -- Đã sửa từ decimal(18,2)
+    `password` VARCHAR(255) NOT NULL,
+    `email` VARCHAR(255) NOT NULL,
+    `country` VARCHAR(255), -- Đã sửa từ decimal(18,2)
+    `role` VARCHAR(255),
+    `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updatedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deletedAt` TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE (`username`),
+    UNIQUE (`email`)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `Customer` (
+    `id` VARCHAR(255) NOT NULL,
+    `fullName` VARCHAR(255) NOT NULL,
+    `phoneNumber` VARCHAR(255),
+    `status` VARCHAR(255),
+    `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updatedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deletedAt` TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `Supplier` (
+    `id` VARCHAR(255) NOT NULL,
+    `name` VARCHAR(255) NOT NULL,
+    `email` VARCHAR(255),
+    `phone` VARCHAR(255),
+    `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updatedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deletedAt` TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `Product` (
+    `id` VARCHAR(255) NOT NULL,
+    `name` VARCHAR(500) NOT NULL,
+    `importPrice` DECIMAL(18, 2),
+    `sellingPrice` DECIMAL(18, 2),
+    `status` VARCHAR(255),
+    `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updatedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deletedAt` TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `InboxEvent` (
+    `id` VARCHAR(255) NOT NULL,
+    `eventId` VARCHAR(255) NOT NULL,
+    `payloadReceive` TEXT, 
+    `status` VARCHAR(255),
+    `processedAt` DATETIME,
+    `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updatedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deletedAt` TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE (`eventId`)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `Contract` (
+    `id` VARCHAR(255) NOT NULL,
+    `code` VARCHAR(255),
+    `signedDate` DATE,
+    `productPrice` DECIMAL(18, 2),
+    `prepaid` DECIMAL(18, 2),
+    `status` VARCHAR(255),
+    `penaltyFee` DECIMAL(18, 2),
+    `loanScheduleTermNumber` INT,
+    `principalDueRate` DECIMAL(18, 2),
+    `interestDueRate` DECIMAL(18, 2),
+    `overdueInterestRate` DECIMAL(18, 2),
+    `CustomerId` VARCHAR(255),
+    `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updatedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deletedAt` TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_Contract_Customer` FOREIGN KEY (`CustomerId`) REFERENCES `Customer`(`id`)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `ImportOrder` (
+    `id` VARCHAR(255) NOT NULL,
+    `totalAmount` DECIMAL(18, 2),
+    `status` VARCHAR(255),
+    `importDate` DATE,
+    `SupplierId` VARCHAR(255),
+    `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updatedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deletedAt` TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_ImportOrder_Supplier` FOREIGN KEY (`SupplierId`) REFERENCES `Supplier`(`id`)
+) ENGINE=InnoDB;
+
+
+-- 9. Table: ProductContract
+CREATE TABLE IF NOT EXISTS `ProductContract` (
+    `id` VARCHAR(255) NOT NULL,
+    `ProductId` VARCHAR(255),
+    `ContractId` VARCHAR(255),
+    `amount` INT,
+    `singedAt` DATE,
+    `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updatedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deletedAt` TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_PC_Product` FOREIGN KEY (`ProductId`) REFERENCES `Product`(`id`),
+    CONSTRAINT `FK_PC_Contract` FOREIGN KEY (`ContractId`) REFERENCES `Contract`(`id`)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `ImportOrderDetail` (
+    `id` VARCHAR(255) NOT NULL,
+    `ImportOrderId` VARCHAR(255),
+    `ProductId` VARCHAR(255),
+    `quantity` INT,
+    `importPrice` DECIMAL(18, 2),
+    `importDate` DATE,
+    `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updatedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deletedAt` TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_Detail_Order` FOREIGN KEY (`ImportOrderId`) REFERENCES `ImportOrder`(`id`),
+    CONSTRAINT `FK_Detail_Product` FOREIGN KEY (`ProductId`) REFERENCES `Product`(`id`)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `LoanPaymentSchedule` (
+    `id` VARCHAR(255) NOT NULL,
+    `ContractId` VARCHAR(255),
+    `termNo` INT, 
+    `dueDate` DATE,
+    `penaltyFee` DECIMAL(18, 2),
+    `interestDue` DECIMAL(18, 2),
+    `pricipalDue` DECIMAL(18, 2),
+    `interestOverdue` DECIMAL(18, 2),
+    `principalOverdue` DECIMAL(18, 2),
+    `penaltyFeePaid` DECIMAL(18, 2),
+    `interestOverduePaid` DECIMAL(18, 2),
+    `interestPaid` DECIMAL(18, 2),
+    `principalPaid` DECIMAL(18, 2),
+    `status` VARCHAR(255),
+    `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updatedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deletedAt` TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_Schedule_Contract` FOREIGN KEY (`ContractId`) REFERENCES `Contract`(`id`)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `TransactionLoanPaymentSchedule` (
+    `id` VARCHAR(255) NOT NULL,
+    `LoanPaymentScheduleId` VARCHAR(255),
+    `CustomerId` VARCHAR(255),
+    `UserId` VARCHAR(255),
+    `moneyPrice` DECIMAL(18, 2),
+    `paymentDate` DATE,
+    `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updatedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deletedAt` TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_Trans_Schedule` FOREIGN KEY (`LoanPaymentScheduleId`) REFERENCES `LoanPaymentSchedule`(`id`),
+    CONSTRAINT `FK_Trans_Customer` FOREIGN KEY (`CustomerId`) REFERENCES `Customer`(`id`),
+    CONSTRAINT `FK_Trans_User` FOREIGN KEY (`UserId`) REFERENCES `User`(`id`)
+) ENGINE=InnoDB;
+
+
+CREATE TABLE IF NOT EXISTS `OutboxEvent` (
+    `id` VARCHAR(255) NOT NULL,
+    `aggregateId` VARCHAR(255),
+    `aggregateType` VARCHAR(255),
+    `eventType` VARCHAR(255),
+    `payload` TEXT, 
+    `status` VARCHAR(255),
+    `TransactionLoanPaymentScheduleId` VARCHAR(255),
+    `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updatedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deletedAt` TIMESTAMP NULL DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    CONSTRAINT `FK_Outbox_Transaction` FOREIGN KEY (`TransactionLoanPaymentScheduleId`) REFERENCES `TransactionLoanPaymentSchedule`(`id`)
+) ENGINE=InnoDB;

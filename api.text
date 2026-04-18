@@ -1,0 +1,285 @@
+curl --location --request GET 'http://localhost:8082/api/v1/customers/search?name=%C4%90%E1%BB%A9c' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--data '{
+    "name" : "Đức"
+}'
+{
+    "code": 200,
+    "message": "Lấy danh sách khách hàng thành công",
+    "data": [
+        {
+            "id": "C001",
+            "fullName": "Phạm Văn Đức",
+            "phoneNumber": "0934567890",
+            "status": "ACTIVE"
+        }
+    ]
+
+curl --location 'http://localhost:8080/api/v1/payments/C001/contracts/active' \
+--header 'Accept: application/json'
+
+{
+    "code": 200,
+    "message": "Truy vấn danh sách hợp đồng thành công",
+    "data": [
+        {
+            "id": "CON001",
+            "code": "HD-2025-001",
+            "status": "ACTIVE",
+            "loanAmount": 17000000.00,
+            "signedDate": "2026-01-05T08:30:00",
+            "productPrice": 22000000.00,
+            "prepaidAmount": 5000000.00,
+            "paymentSchedules": [
+                {
+                    "id": "SCH001",
+                    "termNo": 1,
+                    "contractId": "CON001",
+                    "dueDate": "2026-03-15T00:00:00",
+                    "penaltyFee": 100000.00,
+                    "overdueInterest": 0.00,
+                    "interestDue": 113333.33,
+                    "principalDue": 5666666.67,
+                    "status": "PAID",
+                    "penaltyFeePaid": 0.00,
+                    "overdueInterestPaid": 0.00,
+                    "interestPaid": 113333.33,
+                    "principlePaid": 5666666.67,
+                    "principleDueRate": 0.33,
+                    "interestDueRate": 0.02,
+                    "overdueInterestRate": 0.02
+                },
+                {
+                    "id": "SCH002",
+                    "termNo": 2,
+                    "contractId": "CON001",
+                    "dueDate": "2026-04-15T10:38:06",
+                    "penaltyFee": 100000.00,
+                    "overdueInterest": 0.00,
+                    "interestDue": 113333.33,
+                    "principalDue": 5666666.67,
+                    "status": "PENDING",
+                    "penaltyFeePaid": 0.00,
+                    "overdueInterestPaid": 0.00,
+                    "interestPaid": 0.00,
+                    "principlePaid": 0.00,
+                    "principleDueRate": 0.33,
+                    "interestDueRate": 0.02,
+                    "overdueInterestRate": 0.02
+                },
+                {
+                    "id": "SCH003",
+                    "termNo": 3,
+                    "contractId": "CON001",
+                    "dueDate": "2026-05-15T00:00:00",
+                    "penaltyFee": 100000.00,
+                    "overdueInterest": 0.00,
+                    "interestDue": 113333.33,
+                    "principalDue": 5666666.67,
+                    "status": "PENDING",
+                    "penaltyFeePaid": 0.00,
+                    "overdueInterestPaid": 0.00,
+                    "interestPaid": 0.00,
+                    "principlePaid": 0.00,
+                    "principleDueRate": 0.33,
+                    "interestDueRate": 0.02,
+                    "overdueInterestRate": 0.02
+                }
+            ]
+        },
+        {
+            "id": "CON002",
+            "code": "HD-2025-002",
+            "status": "ACTIVE",
+            "loanAmount": 14000000.00,
+            "signedDate": "2026-01-10T09:00:00",
+            "productPrice": 17000000.00,
+            "prepaidAmount": 3000000.00,
+            "paymentSchedules": [
+                {
+                    "id": "SCH004",
+                    "termNo": 1,
+                    "contractId": "CON002",
+                    "dueDate": "2026-03-15T00:00:00",
+                    "penaltyFee": 100000.00,
+                    "overdueInterest": 0.00,
+                    "interestDue": 93333.33,
+                    "principalDue": 4666666.67,
+                    "status": "PAID",
+                    "penaltyFeePaid": 0.00,
+                    "overdueInterestPaid": 0.00,
+                    "interestPaid": 93333.33,
+                    "principlePaid": 4666666.67,
+                    "principleDueRate": 0.33,
+                    "interestDueRate": 0.02,
+                    "overdueInterestRate": 0.02
+                },
+                {
+                    "id": "SCH005",
+                    "termNo": 2,
+                    "contractId": "CON002",
+                    "dueDate": "2026-04-15T00:00:00",
+                    "penaltyFee": 100000.00,
+                    "overdueInterest": 0.00,
+                    "interestDue": 93333.33,
+                    "principalDue": 4666666.67,
+                    "status": "PENDING",
+                    "penaltyFeePaid": 0.00,
+                    "overdueInterestPaid": 0.00,
+                    "interestPaid": 0.00,
+                    "principlePaid": 0.00,
+                    "principleDueRate": 0.33,
+                    "interestDueRate": 0.02,
+                    "overdueInterestRate": 0.02
+                },
+                {
+                    "id": "SCH006",
+                    "termNo": 3,
+                    "contractId": "CON002",
+                    "dueDate": "2026-05-15T00:00:00",
+                    "penaltyFee": 100000.00,
+                    "overdueInterest": 0.00,
+                    "interestDue": 93333.33,
+                    "principalDue": 4666666.67,
+                    "status": "PENDING",
+                    "penaltyFeePaid": 0.00,
+                    "overdueInterestPaid": 0.00,
+                    "interestPaid": 0.00,
+                    "principlePaid": 0.00,
+                    "principleDueRate": 0.33,
+                    "interestDueRate": 0.02,
+                    "overdueInterestRate": 0.02
+                }
+            ]
+        },
+        {
+            "id": "CON003",
+            "code": "HD-2025-003",
+            "status": "ACTIVE",
+            "loanAmount": 6000000.00,
+            "signedDate": "2026-01-15T10:00:00",
+            "productPrice": 8000000.00,
+            "prepaidAmount": 2000000.00,
+            "paymentSchedules": [
+                {
+                    "id": "SCH007",
+                    "termNo": 1,
+                    "contractId": "CON003",
+                    "dueDate": "2026-03-15T00:00:00",
+                    "penaltyFee": 100000.00,
+                    "overdueInterest": 0.00,
+                    "interestDue": 40000.00,
+                    "principalDue": 2000000.00,
+                    "status": "PAID",
+                    "penaltyFeePaid": 0.00,
+                    "overdueInterestPaid": 0.00,
+                    "interestPaid": 40000.00,
+                    "principlePaid": 2000000.00,
+                    "principleDueRate": 0.33,
+                    "interestDueRate": 0.02,
+                    "overdueInterestRate": 0.02
+                },
+                {
+                    "id": "SCH008",
+                    "termNo": 2,
+                    "contractId": "CON003",
+                    "dueDate": "2026-04-15T00:00:00",
+                    "penaltyFee": 100000.00,
+                    "overdueInterest": 0.00,
+                    "interestDue": 40000.00,
+                    "principalDue": 2000000.00,
+                    "status": "PENDING",
+                    "penaltyFeePaid": 0.00,
+                    "overdueInterestPaid": 0.00,
+                    "interestPaid": 0.00,
+                    "principlePaid": 0.00,
+                    "principleDueRate": 0.33,
+                    "interestDueRate": 0.02,
+                    "overdueInterestRate": 0.02
+                },
+                {
+                    "id": "SCH009",
+                    "termNo": 3,
+                    "contractId": "CON003",
+                    "dueDate": "2026-05-15T00:00:00",
+                    "penaltyFee": 100000.00,
+                    "overdueInterest": 0.00,
+                    "interestDue": 40000.00,
+                    "principalDue": 2000000.00,
+                    "status": "PENDING",
+                    "penaltyFeePaid": 0.00,
+                    "overdueInterestPaid": 0.00,
+                    "interestPaid": 0.00,
+                    "principlePaid": 0.00,
+                    "principleDueRate": 0.33,
+                    "interestDueRate": 0.02,
+                    "overdueInterestRate": 0.02
+                }
+            ]
+        }
+    ]
+}
+
+curl --location 'http://localhost:8080/api/v1/payments/C001/schedule/CON001' \
+--header 'Accept: application/json'
+
+{
+    "code": 200,
+    "message": "Truy vấn danh sách hợp đồng thành công",
+    "data": [
+        {
+            "id": "SCH002",
+            "termNo": 2,
+            "dueDate": "2026-04-15T10:38:06",
+            "penaltyFee": 100000.00,
+            "overdueInterest": 0.00,
+            "interestDue": 113333.33,
+            "principalDue": 5666666.67,
+            "status": "PENDING",
+            "penaltyFeePaid": 0.00,
+            "overdueInterestPaid": 0.00,
+            "interestPaid": 0.00,
+            "principlePaid": 0.00
+        },
+        {
+            "id": "SCH003",
+            "termNo": 3,
+            "dueDate": "2026-05-15T00:00:00",
+            "penaltyFee": 100000.00,
+            "overdueInterest": 0.00,
+            "interestDue": 113333.33,
+            "principalDue": 5666666.67,
+            "status": "PENDING",
+            "penaltyFeePaid": 0.00,
+            "overdueInterestPaid": 0.00,
+            "interestPaid": 0.00,
+            "principlePaid": 0.00
+        }
+    ]
+}
+curl --location 'http://localhost:8080/api/v1/payments/C001/contracts/payment' \
+--header 'Content-Type: application/json' \
+--header 'Accept: application/json' \
+--data '{
+           "scheduleId": "SCH002",
+           "amount": 975667
+         }'
+{
+    "code": 200,
+    "message": "Thanh toán kỳ hạn thành công",
+    "data": {
+        "id": "SCH002",
+        "termNo": 2,
+        "dueDate": "2026-04-15T10:38:06",
+        "penaltyFee": 100000.00,
+        "overdueInterest": 0.00,
+        "interestDue": 113333.33,
+        "principalDue": 5666666.67,
+        "status": "PENDING",
+        "penaltyFeePaid": 0.00,
+        "overdueInterestPaid": 0.00,
+        "interestPaid": 113333.33,
+        "principlePaid": 862333.67
+    }
+}
