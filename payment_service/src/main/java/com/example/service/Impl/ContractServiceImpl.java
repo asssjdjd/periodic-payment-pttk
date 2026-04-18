@@ -1,4 +1,4 @@
-package com.example.service.impl;
+package com.example.service.Impl;
 
 
 import com.example.dto.LoanPaymentScheduleDTO;
@@ -8,7 +8,6 @@ import com.example.model.LoanPaymentSchedule;
 import com.example.repository.ContractRepository;
 import com.example.repository.LoanPaymentScheduleRepository;
 import com.example.service.ContractService;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

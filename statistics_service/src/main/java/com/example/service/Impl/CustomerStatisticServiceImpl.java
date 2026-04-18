@@ -1,6 +1,5 @@
-package com.example.service.impl;
+package com.example.service.Impl;
 
-import com.example.common.LoanPaymentStatus;
 import com.example.dto.ContractDto;
 import com.example.dto.CustomerStatisticDto;
 import com.example.dto.LoanPaymentScheduleDto;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

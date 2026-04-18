@@ -25,6 +25,7 @@
         <module>account-service</module>
         <module>payment_service</module>
         <module>statistics_service</module>
+        <module>supplier_service</module>
     </modules>
     <scm>
 		<connection/>

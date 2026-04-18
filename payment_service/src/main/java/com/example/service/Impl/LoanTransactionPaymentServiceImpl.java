@@ -1,11 +1,10 @@
-package com.example.service.impl;
+package com.example.service.Impl;
 
 
 import com.example.dto.LoanPaymentScheduleDTO;
 import com.example.dto.response.LoanPaymentScheduleResponse;
 import com.example.exception.ExceptionCode;
 import com.example.exception.ResourceException;
-import com.example.model.Contract;
 import com.example.model.LoanPaymentSchedule;
 import com.example.model.TransactionLoanPaymentSchedule;
 import com.example.repository.ContractRepository;
@@ -13,7 +12,6 @@ import com.example.repository.LoanPaymentScheduleRepository;
 import com.example.repository.TransactionLoanPaymentScheduleRepository;
 import com.example.service.LoanTransactionPaymentService;
 import com.example.service.ScheduleState;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
