@@ -8,10 +8,11 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "loanpaymentschedule")
+@Table(name = "loan_payment_schedule")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,30 +22,30 @@ import java.time.LocalDateTime;
 public class LoanPaymentSchedule extends BaseEntity {
 
     @Id
-    @Column(name = "scheduleId")
+    @Column(name = "id")
     String scheduleId;
 
-    @Column(name = "contractId", nullable = false)
+    @Column(name = "contract_id", nullable = false)
     String contractId;
 
-    @Column(name = "termNo", nullable = false)
+    @Column(name = "term_no", nullable = false)
     int termNo;
 
-    @Column(name = "dueDate", nullable = false)
-    LocalDateTime dueDate;
+    @Column(name = "due_date", nullable = false)
+    LocalDate dueDate;
 
     // --- CÁC KHOẢN PHẢI THU (DUE) ---
 
-    @Column(name = "penaltyFee", precision = 18, scale = 2)
+    @Column(name = "penalty_fee", precision = 18, scale = 2)
     BigDecimal penaltyFee;
 
-    @Column(name = "overdueInterest", precision = 18, scale = 2)
+    @Column(name = "interest_overdue", precision = 18, scale = 2)
     BigDecimal overdueInterest;
 
-    @Column(name = "interestDue", precision = 18, scale = 2)
+    @Column(name = "interest_due", precision = 18, scale = 2)
     BigDecimal interestDue;
 
-    @Column(name = "principalDue", precision = 18, scale = 2)
+    @Column(name = "principal_due", precision = 18, scale = 2)
     BigDecimal principalDue;
 
     @Column(name = "status", length = 50)
@@ -54,16 +55,16 @@ public class LoanPaymentSchedule extends BaseEntity {
 
     // --- CÁC KHOẢN ĐÃ THANH TOÁN (PAID) ---
 
-    @Column(name = "penaltyFeePaid", precision = 18, scale = 2)
+    @Column(name = "penalty_fee_paid", precision = 18, scale = 2)
     BigDecimal penaltyFeePaid;
 
-    @Column(name = "overdueInterestPaid", precision = 18, scale = 2)
+    @Column(name = "interest_overdue_paid", precision = 18, scale = 2)
     BigDecimal overdueInterestPaid;
 
-    @Column(name = "interestPaid", precision = 18, scale = 2)
+    @Column(name = "interest_paid", precision = 18, scale = 2)
     BigDecimal interestPaid;
 
-    @Column(name = "principlePaid", precision = 18, scale = 2)
+    @Column(name = "principal_paid", precision = 18, scale = 2)
     BigDecimal principlePaid;
 
 }

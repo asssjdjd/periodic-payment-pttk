@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Component
@@ -23,7 +24,7 @@ public class PendingStateImpl implements ScheduleState {
 
     @Override
     @Transactional
-    public BigDecimal pay(String loanPaymentScheduleId, BigDecimal amount) {
+    public BigDecimal pay(String loanPaymentScheduleId, BigDecimal amount, BigDecimal penaltyFee) {
 
         LoanPaymentSchedule entity = scheduleRepository.findById(loanPaymentScheduleId)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy kỳ thanh toán với ID: " + loanPaymentScheduleId));
@@ -38,7 +39,7 @@ public class PendingStateImpl implements ScheduleState {
             remaining = remaining.subtract(interestOwed);
         } else {
             entity.setInterestPaid(entity.getInterestPaid().add(remaining));
-            entity.setStatus("PARTIALLY_PAID");
+            entity.setStatus("PENDING");
             return BigDecimal.ZERO;
         }
 
@@ -48,7 +49,7 @@ public class PendingStateImpl implements ScheduleState {
             entity.setPrinciplePaid(entity.getPrincipalDue());
             remaining = remaining.subtract(principalOwed);
             entity.setStatus("PAID");
-            entity.setDueDate(LocalDateTime.now());
+            entity.setDueDate(LocalDate.now());
         }else {
             entity.setPrinciplePaid(entity.getPrinciplePaid().add(remaining));
             remaining = BigDecimal.ZERO;

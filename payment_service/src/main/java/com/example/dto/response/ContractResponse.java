@@ -24,7 +24,7 @@ public class ContractResponse {
     private String code;
     private String status;
     private BigDecimal loanAmount;
-    private LocalDateTime signedDate;
+    private LocalDate signedDate;
     private BigDecimal productPrice;
     private BigDecimal prepaidAmount;
     private List<LoanPaymentScheduleDTO> paymentSchedules; // Lấy từ bảng LoanOffer

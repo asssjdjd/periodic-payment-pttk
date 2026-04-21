@@ -83,22 +83,4 @@ public class CustomerController {
             throw e;
         }
     }
-
-//    @GetMapping("/search-by-cccd")
-//    public ApiResponse searchCustomersByCccd(
-//            @RequestParam(name = "cccd", defaultValue = "") String cccd) {
-//
-//        log.info("🔍 [User Service] Processing searchCustomersByCccd request - cccd: '{}'", cccd);
-//
-//        try {
-//            List<CustomerResponse> result = customerService.searchCustomersByCccd(cccd);
-//
-//            log.info("✅ [User Service] Search by CCCD successful - found {} customers", result.size());
-//
-//            return new SuccessResponse(result, "Tìm kiếm khách hàng theo CCCD thành công");
-//        } catch (Exception e) {
-//            log.error("❌ [User Service] Error searching customers by CCCD: ", e);
-//            throw e;
-//        }
-//    }
 }

@@ -18,7 +18,7 @@ public class LoanPaymentScheduleDTO {
     String id;
     int termNo;
     String contractId;
-    LocalDateTime dueDate;
+    LocalDate dueDate;
     BigDecimal penaltyFee;
     BigDecimal overdueInterest;
     BigDecimal interestDue;

@@ -5,9 +5,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
-@Table(name = "transactionloanpaymentschedule")
+@Table(name = "transaction_loan_payment_schedule")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,9 +19,18 @@ public class TransactionLoanPaymentSchedule extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @JoinColumn(name = "amount", nullable = false)
+    @Column(name = "money_price", nullable = false)
     private BigDecimal amount;
 
-    @JoinColumn(name = "scheduleId", nullable = false)
+    @Column(name = "loan_payment_schedule_id", nullable = false)
     private String scheduleId;
+
+    @Column(name = "customer_id", nullable = false) // ĐÃ BỔ SUNG
+    private String customerId;
+
+    @Column(name = "user_id", nullable = false) // ĐÃ BỔ SUNG
+    private String userId;
+
+    @Column(name = "payment_date", nullable = false) // ĐÃ BỔ SUNG
+    private LocalDate paymentDate;
 }

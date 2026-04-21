@@ -6,10 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "contract")
@@ -26,22 +23,22 @@ public class Contract{
     @Column(name = "code", unique = true)
     String code;
 
-    @Column(name = "userId", nullable = false)
+    @Column(name = "user_id", nullable = false)
     String userId;
 
-    @Column(name = "customerId", nullable = false)
+    @Column(name = "customer_id", nullable = false)
     String customerId;
 
-    @Column(name = "signedDate", nullable = false)
-    LocalDateTime signedDate;
+    @Column(name = "signed_date", nullable = false)
+    LocalDate signedDate;
 
-    @Column(name = "productPrice", nullable = false)
+    @Column(name = "product_price", nullable = false)
     BigDecimal productPrice;
 
-    @Column(name = "prepaidAmount", nullable = false)
+    @Column(name = "prepaid", nullable = false)
     BigDecimal prepaidAmount;
 
-    @Column(name = "loanAmount", nullable = false)
+    @Column(name = "loan_amount", nullable = false)
     BigDecimal loanAmount;
 
     @Column(name = "status", nullable = false)

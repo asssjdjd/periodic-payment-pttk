@@ -14,7 +14,8 @@ public enum ExceptionCode {
     LOAN_PAYMENT_SCHEDUE(407,"Hợp đồng bị lỗi"),
     INVALID_INPUT(407,"Đầu vào không hợp lệ"),
     LOAN_PAYMENT_SCHEDUE_NOT_FOUND(408, "Không tìm thấy schedule payment hợp lệ"),
-    LOAN_PAYMENT_SCHEDUE_ALREADY_PAID(409,"Đã thay toán kỳ hạn này");
+    LOAN_PAYMENT_SCHEDUE_ALREADY_PAID(409,"Đã thay toán kỳ hạn này"),
+    FIND_CONTRACT_BY_SCHEDULE_NOT_FOUND(410,"không tìm thấy hợp đồng ứng với kỳ thanh toán ");
 
     // some error code follow here
 

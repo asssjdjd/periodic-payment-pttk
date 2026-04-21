@@ -5,6 +5,7 @@ import com.example.dto.LoanPaymentScheduleDTO;
 import com.example.dto.response.LoanPaymentScheduleResponse;
 import com.example.exception.ExceptionCode;
 import com.example.exception.ResourceException;
+import com.example.model.Contract;
 import com.example.model.LoanPaymentSchedule;
 import com.example.model.TransactionLoanPaymentSchedule;
 import com.example.repository.ContractRepository;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,6 +61,10 @@ public class  LoanTransactionPaymentServiceImpl implements LoanTransactionPaymen
         LoanPaymentSchedule entity = repo.findById(scheduleId)
                 .orElseThrow(() -> new ResourceException(ExceptionCode.LOAN_PAYMENT_SCHEDUE_NOT_FOUND.getCode(), "Không tìm thấy lịch thanh toán"));
 
+        Contract contract = contractRepository.findById(entity.getContractId())
+                .orElseThrow(() -> new ResourceException(ExceptionCode.FIND_CONTRACT_BY_SCHEDULE_NOT_FOUND.getCode(),
+                        ExceptionCode.FIND_CONTRACT_BY_SCHEDULE_NOT_FOUND.getMessage()));;
+        int maxTerm = contract.getLoanScheduleTermNumber();
 
         if ("PAID".equals(entity.getStatus())) {
             throw new ResourceException(ExceptionCode.LOAN_PAYMENT_SCHEDUE_ALREADY_PAID.getCode(), "Kỳ hạn này đã được thanh toán hoàn tất");
@@ -66,7 +72,9 @@ public class  LoanTransactionPaymentServiceImpl implements LoanTransactionPaymen
 
         ScheduleState state = createScheduleState(entity.getStatus());
 
-        BigDecimal remainingMoney = state.pay(scheduleId, amount);
+        BigDecimal penaltyFee = entity.getPenaltyFee();
+
+        BigDecimal remainingMoney = state.pay(scheduleId, amount,penaltyFee);
 
         log.info("[LoanTransactionPayment] Hoàn tất. Tiền dư: {}", remainingMoney);
         LoanPaymentSchedule updatedEntity = repo.findById(scheduleId).get();
@@ -74,10 +82,18 @@ public class  LoanTransactionPaymentServiceImpl implements LoanTransactionPaymen
         TransactionLoanPaymentSchedule transactionLoanPaymentSchedule = TransactionLoanPaymentSchedule.builder()
                 .amount(amount)
                 .scheduleId(scheduleId)
+                .paymentDate(LocalDate.now())
                 .build();
 
         loanPaymentScheduleRepository.save(transactionLoanPaymentSchedule);
         log.info("[LoanTransactionPayment] Cập nhật bản ghi vào TransactionLoanPaymentSchedule ");
+
+        if( entity.getTermNo() >= maxTerm) {
+            log.info("[LoanTransactionPayment] [Đã thanh toán thành công toàn bộ hợp đồng : {}] [Tiến hành đóng hợp đồng]", contract.getCode());
+            contract.setStatus("COMPLETED");
+            contractRepository.save(contract);
+        }
+
         return LoanPaymentScheduleResponse.mapFromLoanPaymentDto(LoanPaymentScheduleDTO.mapLoanPaymentScheduleDtoNotCalculate(updatedEntity));
     }
 

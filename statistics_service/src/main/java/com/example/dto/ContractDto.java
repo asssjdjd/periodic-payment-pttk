@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import java.util.List;
 public class ContractDto {
 
     private List<LoanPaymentScheduleDto> loanPaymentSchedules;
-    private LocalDateTime signDate;
+    private LocalDate signDate;
     private BigDecimal Debt;
     private BigDecimal InterestRemaining;
     private BigDecimal PrincipleRemaining;

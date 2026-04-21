@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,5 +18,5 @@ public interface LoanPaymentScheduleRepository extends JpaRepository<LoanPayment
 
     // Bỏ JOIN FETCH s.contract vì nó không tồn tại
     @Query("SELECT s FROM LoanPaymentSchedule s WHERE s.dueDate < :now AND s.status NOT IN ('PAID')")
-    List<LoanPaymentSchedule> findOverdueSchedules(@Param("now") LocalDateTime now);
+    List<LoanPaymentSchedule> findOverdueSchedules(@Param("now") LocalDate now);
 }

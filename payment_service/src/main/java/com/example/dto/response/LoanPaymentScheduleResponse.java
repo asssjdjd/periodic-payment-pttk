@@ -5,6 +5,7 @@ import com.example.dto.LoanPaymentScheduleDTO;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
 public class LoanPaymentScheduleResponse {
     private String id;
     private Integer termNo;
-    private LocalDateTime dueDate;
+    private LocalDate dueDate;
     private BigDecimal penaltyFee;
     private BigDecimal overdueInterest;
     private BigDecimal interestDue;

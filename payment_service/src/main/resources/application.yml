@@ -8,10 +8,10 @@ spring:
 
   datasource:
     # 1. Thông tin cơ bản
-    url: jdbc:mysql://localhost:3307/preodic_payment?useSSL=false&serverTimezone=Asia/Ho_Chi_Minh&allowPublicKeyRetrieval=true
-    username: root
+    url: jdbc:postgresql://localhost:5434/payment-db?currentSchema=public
+    username: postgres
     password: K59Ptl*100504
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.postgresql.Driver
 
     # 2. Cấu hình Hikari Connection Pool (Tối ưu cho Production)
     hikari:
@@ -29,12 +29,13 @@ spring:
 
   jpa:
     # 3. Cấu hình Hibernate
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       # validate: Kiểm tra schema DB với Entity (Khuyên dùng cho Prod)
       # update: Tự động update schema (Chỉ dùng cho Dev/Staging)
       ddl-auto: validate
       naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
     show-sql: false # Tắt log SQL ở Prod để tránh lộ dữ liệu/giảm hiệu năng
     properties:
       hibernate:

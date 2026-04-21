@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class LoanPaymentScheduleDto {
     int termNo;
-    LocalDateTime dueDate;
+    LocalDate dueDate;
     BigDecimal penaltyFee;
     BigDecimal overdueInterest;
     BigDecimal interestDue;

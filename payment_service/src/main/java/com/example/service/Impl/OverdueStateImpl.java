@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Slf4j
@@ -20,7 +21,7 @@ public class OverdueStateImpl implements ScheduleState {
 
 
     @Override
-    public BigDecimal pay(String loanPaymentScheduleId, BigDecimal amount) {
+    public BigDecimal pay(String loanPaymentScheduleId, BigDecimal amount, BigDecimal penaltyFee) {
         LoanPaymentSchedule entity = scheduleRepository.findById(loanPaymentScheduleId)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy kỳ thanh toán với ID: " + loanPaymentScheduleId));
         log.info("[OverdueStateImpl] : Xử lý thanh toán cho kỳ QUÁ HẠN ID: {}, Số tiền nộp: {}", entity.getContractId(), amount);
@@ -31,7 +32,7 @@ public class OverdueStateImpl implements ScheduleState {
         BigDecimal penaltyOwed = entity.getPenaltyFee().subtract(entity.getPenaltyFeePaid());
 
         if (remaining.compareTo(penaltyOwed) >= 0) {
-            entity.setPenaltyFeePaid(new BigDecimal(100000));
+            entity.setPenaltyFeePaid(penaltyFee);
             remaining = remaining.subtract(penaltyOwed);
         } else {
             entity.setPenaltyFeePaid(entity.getPenaltyFeePaid().add(remaining));
@@ -70,7 +71,7 @@ public class OverdueStateImpl implements ScheduleState {
 //            entity.setStatus("PARTIALLY_PAID"); vẫn là quá hạn
             remaining = BigDecimal.ZERO;
         }
-        entity.setDueDate(LocalDateTime.now());
+        entity.setDueDate(LocalDate.now());
         scheduleRepository.save(entity);
         return remaining;
     }

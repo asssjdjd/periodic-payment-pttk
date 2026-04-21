@@ -1,23 +1,10 @@
 package com.example.entity;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import jakarta.persistence.*;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "contract")
@@ -27,33 +14,34 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Contract {
+public class Contract{
     @Id
     String id;
 
     @Column(name = "code", unique = true)
     String code;
 
-    @Column(name = "userId", nullable = false)
+    @Column(name = "user_id", nullable = false)
     String userId;
 
-    @Column(name = "customerId", nullable = false)
+    @Column(name = "customer_id", nullable = false)
     String customerId;
 
-    @Column(name = "signedDate", nullable = false)
-    LocalDateTime signedDate;
+    @Column(name = "signed_date", nullable = false)
+    LocalDate signedDate;
 
-    @Column(name = "productPrice", nullable = false)
+    @Column(name = "product_price", nullable = false)
     BigDecimal productPrice;
 
-    @Column(name = "prepaidAmount", nullable = false)
+    @Column(name = "prepaid", nullable = false)
     BigDecimal prepaidAmount;
 
-    @Column(name = "loanAmount", nullable = false)
+    @Column(name = "loan_amount", nullable = false)
     BigDecimal loanAmount;
 
     @Column(name = "status", nullable = false)
     String status;
+    // COMPLETED,ACTIVE
 
     @Column(name = "loan_schedule_term_number")
     int loanScheduleTermNumber;
@@ -69,16 +57,5 @@ public class Contract {
 
     @Column(name = "overdue_interest_rate")
     BigDecimal overdueInterestRate;
-
-    @CreationTimestamp
-    @Column(name = "createdAt", updatable = false)
-    LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updatedAt")
-    LocalDateTime updatedAt;
-
-    @Column(name = "deletedAt")
-    LocalDateTime deletedAt; // Dùng cho cơ chế Soft Delete
 }
 

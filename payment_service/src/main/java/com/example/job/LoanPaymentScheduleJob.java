@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -27,7 +28,7 @@ public class LoanPaymentScheduleJob {
     // Chạy mỗi 60,000 milliseconds (1 phút)
     @Scheduled(fixedRate = 60000)
     public void cleanupExpiredSlots() {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDate now = LocalDate.now();
         log.info("Bắt đầu quét các lịch thanh toán quá hạn lúc: {}", now);
 
         List<LoanPaymentSchedule> overdueSchedules = scheduleRepository.findOverdueSchedules(now);
@@ -45,7 +46,7 @@ public class LoanPaymentScheduleJob {
 
 
             // 2. Tính toán số ngày quá hạn (Days Overdue)
-            long overdueDays = ChronoUnit.DAYS.between(schedule.getDueDate().toLocalDate(), now.toLocalDate());
+            long overdueDays = ChronoUnit.DAYS.between(schedule.getDueDate(), now);
 
             // Nếu số ngày <= 0 (do chênh lệch giờ nhưng chưa qua ngày mới), bỏ qua tính lãi
             if (overdueDays > 0) {
@@ -67,8 +68,9 @@ public class LoanPaymentScheduleJob {
                     schedule.setOverdueInterest(overdueInterest);
                 }
             }
-            scheduleRepository.saveAll(overdueSchedules);
+            schedule.setPenaltyFee(contract.getPenaltyFee());
         }
+        scheduleRepository.saveAll(overdueSchedules);
     }
 
     private BigDecimal getOrDefault(BigDecimal value) {

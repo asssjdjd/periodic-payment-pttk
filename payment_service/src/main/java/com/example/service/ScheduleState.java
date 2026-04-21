@@ -8,5 +8,5 @@ import java.math.BigDecimal;
 
 public interface ScheduleState {
     @Transactional
-    BigDecimal pay(String loanPaymentScheduleId, BigDecimal money);
+    BigDecimal pay(String loanPaymentScheduleId, BigDecimal money,  BigDecimal penaltyFee);
 }
