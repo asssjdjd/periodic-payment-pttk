@@ -7,30 +7,30 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "customer") // Khớp với bảng trong Liquibase
+@Table(name = "users") // Khớp với bảng trong Liquibase
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Customer extends BaseEntity{
+public class User extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     String id;
 //
-    @Column(name = "full_name", nullable = false)
-    String fullName;
+    @Column(name = "username", nullable = false)
+    String username;
 
-    @Column(name = "phone_number", nullable = false, length = 20)
-    String phoneNumber;
+    @Column(name = "email", nullable = false, length = 20)
+    String email;
 
     @Column(name = "password")
     String password;
 
-    @Column(name = "cccd")
-    String cccd;
+    @Column(name = "country", nullable = false, length = 50)
+    String country;
 
-    @Column(name = "status", nullable = false, length = 50)
-    String status;
+    @Column(name = "role", nullable = false, length = 50)
+    String role;
 
 }

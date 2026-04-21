@@ -66,6 +66,8 @@ public class SupplierServiceImpl implements SupplierService {
 
         if(request.getStatus().equals("ACTIVE")) {
             existingSupplier.setDeletedAt(null);
+        }else {
+            existingSupplier.setDeletedAt(LocalDateTime.now());
         }
 
         Supplier updatedSupplier = supplierRepository.save(existingSupplier);

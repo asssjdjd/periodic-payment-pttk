@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "importorder")
+@Table(name = "import_order")
 @Data
 @Builder
 @NoArgsConstructor
@@ -21,14 +21,14 @@ public class ImportOrder extends BaseEntity {
     private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "SupplierId", nullable = false)
+    @JoinColumn(name = "supplier_id", nullable = false)
     private Supplier supplier;
 
     @Column(precision = 18, scale = 2)
-    private BigDecimal totalAmount;
+    private BigDecimal total_amount;
 
     @Column(nullable = false)
     private String status; // PENDING, COMPLETED, CANCELLED
 
-    private LocalDate importDate;
+    private LocalDate import_date;
 }

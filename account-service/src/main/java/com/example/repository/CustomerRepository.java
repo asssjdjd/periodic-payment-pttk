@@ -11,6 +11,8 @@ public interface CustomerRepository extends JpaRepository<Customer,String> {
     //Tìm kiếm khách hàng theo tên, chưa từ khóa (LIKE %keyword%) và không phân biệt chữ hoa, chữ thường.
     List<Customer> findByFullNameContainingIgnoreCase(String keyword);
 
+    List<Customer> findByCccdContaining(String keyword);
+
 //    // THÊM HÀM MỚI: Tìm kiếm chứa chuỗi con của CCCD
 //    List<Customer> findByCccdContaining(String cccdKeyword);
 

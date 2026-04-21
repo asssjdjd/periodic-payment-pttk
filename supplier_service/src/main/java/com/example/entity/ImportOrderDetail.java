@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@Table(name = "importorderdetail")
+@Table(name = "import_order_detail")
 @Data
 @Builder
 @NoArgsConstructor
@@ -21,18 +21,18 @@ public class ImportOrderDetail extends BaseEntity {
     private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ImportOrderId", nullable = false)
+    @JoinColumn(name = "import_order_id", nullable = false)
     private ImportOrder importOrder;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ProductId", nullable = false)
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     @Column(nullable = false)
     private Integer quantity;
 
     @Column(precision = 18, scale = 2, nullable = false)
-    private BigDecimal importPrice;
+    private BigDecimal import_price;
 
-    private LocalDate importDate;
+    private LocalDate import_date;
 }

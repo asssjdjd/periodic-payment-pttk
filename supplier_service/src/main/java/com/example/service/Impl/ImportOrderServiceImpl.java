@@ -42,9 +42,9 @@ public class ImportOrderServiceImpl implements ImportOrderService {
                 .id(order.getId())
                 .supplierId(order.getSupplier().getId())
                 .supplierName(order.getSupplier().getName())
-                .totalAmount(order.getTotalAmount())
+                .totalAmount(order.getTotal_amount())
                 .status(order.getStatus())
-                .importDate(order.getImportDate())
+                .importDate(order.getImport_date())
                 .build();
     }
 }
