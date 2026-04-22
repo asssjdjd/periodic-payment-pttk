@@ -1,20 +1,33 @@
 _format_version: "3.0"
 services:
-  # 1. Định nghĩa Service đích (User)
-  - name: user-service-upstream
-    url: http://user-service:8081 # Sử dụng DNS nội bộ của Docker
+  - name: statistics-service
+    url: http://statistics-service:8081
     routes:
-      - name: user-route
+      - name: statistics-route
         paths:
-          - /api/v1/customers/search
-          - /api/v1/customers/search-by-cccd
+          - /api/v1/statistics
         strip_path: false
 
-  # 2. Định nghĩa Service đích (Payment)
-  - name: payment-service-upstream
+  - name: payment-service
     url: http://payment-service:8080
     routes:
       - name: payment-route
         paths:
           - /api/v1/payments
+        strip_path: false
+
+  - name: account-service
+    url: http://account-service:8082
+    routes:
+      - name: account-route
+        paths:
+          - /api/v1/accounts
+        strip_path: false
+
+  - name: supplier-service
+    url: http://supplier-service:8083
+    routes:
+      - name: supplier-route
+        paths:
+          - /api/v1/suppliers
         strip_path: false

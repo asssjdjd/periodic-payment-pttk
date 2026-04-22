@@ -4,7 +4,7 @@ server:
 
 spring:
   application:
-    name: account-service # Đổi tên định danh cho service
+    name: account-service
 
   datasource:
     # 1. Thông tin cơ bản (Nguyên lý: Database per Service)
@@ -46,3 +46,11 @@ spring:
   sql:
     init:
       continue-on-error: false
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}

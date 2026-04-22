@@ -1,16 +1,29 @@
 version: '3.8'
 
 services:
-  user-service:
+  eureka-server:
     build:
-      context: ./user_service # Docker sẽ tìm Dockerfile ở đây
-    container_name: user-service-prod
+      context: .
+      dockerfile: eureka-server/Dockerfile
+    container_name: eureka-server
+    expose:
+      - "8761"
+    ports:
+      - "8761:8761"
+    networks:
+      - microservices-net
+
+  statistics-service:
+    build:
+      context: .
+      dockerfile: statistics_service/Dockerfile
+    container_name: statistics-service
     expose:
       - "8081"
     ports:
       - "8081:8081"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3307/periodic-payment?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5434/statistic-db?currentSchema=public
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
       interval: 30s
@@ -22,17 +35,103 @@ services:
 
   payment-service:
     build:
-      context: ./payment_service
-    container_name: payment-service-prod
+      context: .
+      dockerfile: payment_service/Dockerfile
+    container_name: payment-service
     expose:
       - "8080"
     ports:
       - "8080:8080"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3307/periodic-payment?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5434/payment-db?currentSchema=public
     healthcheck:
-      # Sửa lại port 8080 cho khớp với ứng dụng
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - microservices-net
+
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin123
+    ports:
+      - "5672:5672"   # Cổng kết nối AMQP
+      - "15672:15672" # Cổng giao diện quản lý (Management UI)
+    networks:
+      - microservices-net
+
+  debezium:
+    image: quay.io/debezium/server:2.5
+    container_name: debezium-server
+    volumes:
+      - ./debezium-conf:/debezium/conf # Chứa file cấu hình
+      - ./debezium_data:/debezium/data
+    environment:
+      - DEBEZIUM_SINK_TYPE=rabbitmq
+      - DEBEZIUM_SINK_RABBITMQ_CONNECTION_HOST=rabbitmq
+      - DEBEZIUM_SINK_RABBITMQ_CONNECTION_PORT=5672
+      - DEBEZIUM_SINK_RABBITMQ_CONNECTION_USERNAME=admin
+      - DEBEZIUM_SINK_RABBITMQ_CONNECTION_PASSWORD=admin123
+
+      -  DEBEZIUM_SOURCE_OFFSET_STORAGE_FILE_FILENAME=/debezium/data/offsets.dat
+      # Cấu hình nguồn (Postgres Local)
+      - DEBEZIUM_SOURCE_CONNECTOR_CLASS=io.debezium.connector.postgresql.PostgresConnector
+      - DEBEZIUM_SOURCE_DATABASE_HOSTNAME=host.docker.internal
+      - DEBEZIUM_SOURCE_DATABASE_PORT=5434
+      - DEBEZIUM_SOURCE_DATABASE_USER=postgres
+      - DEBEZIUM_SOURCE_DATABASE_PASSWORD=K59Ptl*100504
+
+      - DEBEZIUM_SOURCE_DATABASE_DBNAME=payment-db
+
+      - DEBEZIUM_SOURCE_TOPIC_PREFIX=cdc_events
+
+      - DEBEZIUM_SOURCE_TABLE_INCLUDE_LIST=public.outbox_event # Chỉ định bảng muốn theo dõi
+
+      - DEBEZIUM_SOURCE_PLUGIN_NAME=pgoutput
+    depends_on:
+      - rabbitmq
+    networks:
+      - microservices-net
+
+  account-service:
+    build:
+      context: .
+      dockerfile: account-service/Dockerfile
+    container_name: account-service
+    expose:
+      - "8082"
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5434/account-db?currentSchema=public
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - microservices-net
+
+  supplier-service:
+    build:
+      context: .
+      dockerfile: supplier_service/Dockerfile
+    container_name: supplier-service
+    expose:
+      - "8083"
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5434/supplier-db?currentSchema=public
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8083/actuator/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -57,9 +156,13 @@ services:
     networks:
       - microservices-net
     depends_on:
-      user-service:
-        condition: service_healthy # Chỉ chạy Kong khi service đã Health OK
+      statistics-service:
+        condition: service_healthy
       payment-service:
+        condition: service_healthy
+      account-service:
+        condition: service_healthy
+      supplier-service:
         condition: service_healthy
 
 networks:

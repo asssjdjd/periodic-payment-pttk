@@ -1,14 +1,15 @@
-# Dockerfile for User Service
+# Dockerfile for Account Service
 FROM eclipse-temurin:17-jre-alpine
 
 LABEL maintainer="Your Team" \
-      description="User Service" \
+      description="Account Service" \
       version="1.0"
 
+RUN apk add --no-cache curl
 WORKDIR /app
 
-COPY user_service/target/*.jar app.jar
+COPY account-service/target/*.jar app.jar
 
-EXPOSE 8081
+EXPOSE 8082
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

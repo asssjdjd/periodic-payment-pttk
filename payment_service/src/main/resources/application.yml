@@ -4,7 +4,7 @@ server:
 
 spring:
   application:
-    name: payment_service
+    name: payment-service
 
   datasource:
     # 1. Thông tin cơ bản
@@ -47,3 +47,11 @@ spring:
   sql:
     init:
       continue-on-error: false
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
