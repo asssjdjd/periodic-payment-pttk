@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   eureka-server:
@@ -194,7 +193,7 @@ services:
     ports:
       - "9090:9090"
     networks:
-      - gateway-network
+      - microservices-net
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -220,11 +219,40 @@ services:
     ports:
       - "3000:3000"
     networks:
-      - gateway-network
+      - microservices-net
     depends_on:
       - prometheus
     restart: unless-stopped
 
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - microservices-net
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    user: "0:0" # CHỖ MỚI: Chạy bằng quyền root để đọc log
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock # CHỖ MỚI: Mount socket để Promtail thấy danh sách container
+      - ./monitoring/promtail/config.yml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    networks:
+      - microservices-net
+
 networks:
   microservices-net:
     driver: bridge
+
+volumes:
+  prometheus-data: # KHAI BÁO: Để tránh lỗi undefined volume
+    driver: local
+  grafana-data:    # KHAI BÁO: Để tránh lỗi undefined volume
+    driver: local
