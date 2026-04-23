@@ -1,0 +1,33 @@
+global :
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'kong'
+    static_configs:
+      - targets: ['kong:8001']
+    metrics_path: /metrics
+
+  # ==========================================================================
+  # Spring Boot Services (via Micrometer + Actuator)
+  # ==========================================================================
+
+  - job_name: 'spring-microservices'
+    eureka_sd_configs:
+      - server: 'http://eureka-server:8761/eureka'
+    metrics_path: '/actuator/prometheus'
+    # Các rule này giúp Grafana hiển thị đúng tên Service (ví dụ: ACCOUNT-SERVICE)
+    # thay vì hiển thị địa chỉ IP khó nhớ.
+    relabel_configs:
+      - source_labels: [ __meta_eureka_app_name ]
+        target_label: application
+      - source_labels: [ __meta_eureka_app_instance_id ]
+        target_label: instance
+
+  - job_name: 'rabbitmq'
+    static_configs:
+      - targets: ['rabbitmq:15692']
+
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: [ 'localhost:9090' ]

@@ -6,6 +6,18 @@ spring:
   application:
     name: statistics-service
 
+  rabbitmq:
+    host: rabbitmq        # Hoặc IP máy ảo/host.docker.internal nếu chạy Docker
+    port: 5672
+    username: admin        # Trùng với user bạn cấu hình ở RabbitMQ
+    password: admin123
+    listener:
+      simple:
+        acknowledge-mode: manual # QUAN TRỌNG: Đề code tự quyết định khi nào xóa tin nhắn
+        concurrency: 2           # Số luồng (Thread) chạy song song
+        max-concurrency: 5
+        prefetch: 10
+
   datasource:
     # 1. Thông tin cơ bản (Nguyên lý: Database per Service)
     url: jdbc:postgresql://localhost:5434/statistic-db?currentSchema=public

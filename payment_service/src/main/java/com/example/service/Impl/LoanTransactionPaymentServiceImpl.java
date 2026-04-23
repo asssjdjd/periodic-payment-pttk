@@ -1,18 +1,23 @@
 package com.example.service.Impl;
 
 
+import com.example.dto.EventPayloads;
 import com.example.dto.LoanPaymentScheduleDTO;
 import com.example.dto.response.LoanPaymentScheduleResponse;
 import com.example.exception.ExceptionCode;
 import com.example.exception.ResourceException;
 import com.example.model.Contract;
 import com.example.model.LoanPaymentSchedule;
+import com.example.model.OutboxEvent;
 import com.example.model.TransactionLoanPaymentSchedule;
 import com.example.repository.ContractRepository;
 import com.example.repository.LoanPaymentScheduleRepository;
+import com.example.repository.OutboxEventRepository;
 import com.example.repository.TransactionLoanPaymentScheduleRepository;
 import com.example.service.LoanTransactionPaymentService;
 import com.example.service.ScheduleState;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,6 +39,9 @@ public class  LoanTransactionPaymentServiceImpl implements LoanTransactionPaymen
 
     private final PendingStateImpl pendingState;
     private final OverdueStateImpl overdueState;
+
+    private final OutboxEventRepository outboxEventRepository;
+    private final ObjectMapper objectMapper;
 
     @Override
     public List<LoanPaymentScheduleResponse> choosePaymentSchedule(List<LoanPaymentScheduleDTO> loanPaymentSchedules,String contractId) {
@@ -88,13 +96,82 @@ public class  LoanTransactionPaymentServiceImpl implements LoanTransactionPaymen
         loanPaymentScheduleRepository.save(transactionLoanPaymentSchedule);
         log.info("[LoanTransactionPayment] Cập nhật bản ghi vào TransactionLoanPaymentSchedule ");
 
-        if( entity.getTermNo() >= maxTerm) {
+        EventPayloads.TransactionPaymentScheduleEvent paymentEvent = new EventPayloads.TransactionPaymentScheduleEvent(
+                updatedEntity.getScheduleId(),
+                contract.getId(),
+                amount, // Tổng tiền nộp đợt này
+
+                // LẤY TRỰC TIẾP TỪ ENTITY ĐÃ CẬP NHẬT ĐỂ GỬI ĐI
+                updatedEntity.getPrinciplePaid(),
+                updatedEntity.getInterestPaid(),
+                updatedEntity.getPenaltyFeePaid(),
+                updatedEntity.getOverdueInterestPaid(),
+
+                updatedEntity.getStatus(),
+                transactionLoanPaymentSchedule.getId()
+        );
+
+        try{
+            OutboxEvent paymentOutbox = createOutboxEntity(
+                    updatedEntity.getScheduleId(),
+                    "LoanPaymentSchedule",
+                    "TransactionPaymentScheduleEvent",
+                    objectMapper.writeValueAsString(paymentEvent),
+                    transactionLoanPaymentSchedule.getId()
+            );
+            paymentOutbox.setStatus("COMPLETED");
+            outboxEventRepository.save(paymentOutbox);
+            log.info("[Outbox] Đã lưu event TransactionPaymentScheduleEvent");
+        }catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        if( !"COMPLETED".equals(contract.getStatus())&& entity.getTermNo() >= maxTerm && ("PAID".equals(updatedEntity.getStatus()))) {
             log.info("[LoanTransactionPayment] [Đã thanh toán thành công toàn bộ hợp đồng : {}] [Tiến hành đóng hợp đồng]", contract.getCode());
             contract.setStatus("COMPLETED");
             contractRepository.save(contract);
+
+            EventPayloads.UpdateContractStatusEvent contractPayload = new EventPayloads.UpdateContractStatusEvent(
+                    contract.getId(), "COMPLETED"
+            );
+
+            OutboxEvent contractOutbox = null;
+
+            try {
+                contractOutbox = buildOutboxEvent(
+                        contract.getId(), "Contract", "UpdateContractStatusEvent",
+                        objectMapper.writeValueAsString(contractPayload), transactionLoanPaymentSchedule.getId()
+                );
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+            outboxEventRepository.save(contractOutbox);
+
         }
 
         return LoanPaymentScheduleResponse.mapFromLoanPaymentDto(LoanPaymentScheduleDTO.mapLoanPaymentScheduleDtoNotCalculate(updatedEntity));
+    }
+
+    private OutboxEvent createOutboxEntity(String aggregateId, String aggregateType, String eventType, String payload, String transactionId) {
+        OutboxEvent event = new OutboxEvent();
+        event.setAggregateId(aggregateId);
+        event.setAggregateType(aggregateType);
+        event.setEventType(eventType);
+        event.setPayload(payload);
+        event.setStatus("PENDING"); // Để Debezium nhận diện dòng cần lấy
+        event.setTransactionId(transactionId);
+        return event;
+    }
+
+    private OutboxEvent buildOutboxEvent(String aggregateId, String aggregateType, String eventType, String payload, String transactionId) {
+        OutboxEvent event = new OutboxEvent();
+        event.setAggregateId(aggregateId);
+        event.setAggregateType(aggregateType);
+        event.setEventType(eventType);
+        event.setPayload(payload);
+        event.setStatus("RECEIVED"); // Debezium sẽ đọc dòng có trạng thái này
+        event.setTransactionId(transactionId);
+        return event;
     }
 
     private ScheduleState createScheduleState(String status) {

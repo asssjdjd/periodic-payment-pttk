@@ -53,7 +53,6 @@ services:
     networks:
       - microservices-net
 
-
   rabbitmq:
     image: rabbitmq:3-management
     container_name: rabbitmq
@@ -61,8 +60,8 @@ services:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=admin123
     ports:
-      - "5672:5672"   # Cổng kết nối AMQP
-      - "15672:15672" # Cổng giao diện quản lý (Management UI)
+      - "5672:5672"
+      - "15672:15672"
     networks:
       - microservices-net
 
@@ -70,7 +69,7 @@ services:
     image: quay.io/debezium/server:2.5
     container_name: debezium-server
     volumes:
-      - ./debezium-conf:/debezium/conf # Chứa file cấu hình
+      - ./debezium-conf:/debezium/conf
       - ./debezium_data:/debezium/data
     environment:
       - DEBEZIUM_SINK_TYPE=rabbitmq
@@ -79,20 +78,34 @@ services:
       - DEBEZIUM_SINK_RABBITMQ_CONNECTION_USERNAME=admin
       - DEBEZIUM_SINK_RABBITMQ_CONNECTION_PASSWORD=admin123
 
-      -  DEBEZIUM_SOURCE_OFFSET_STORAGE_FILE_FILENAME=/debezium/data/offsets.dat
-      # Cấu hình nguồn (Postgres Local)
+      - DEBEZIUM_FORMAT_KEY=json
+      - DEBEZIUM_FORMAT_VALUE=json
+      - DEBEZIUM_FORMAT_KEY_SCHEMAS_ENABLE=false
+      - DEBEZIUM_FORMAT_VALUE_SCHEMAS_ENABLE=false
+      - DEBEZIUM_SOURCE_OFFSET_STORAGE_FILE_FILENAME=/debezium/data/offsets.dat
+
       - DEBEZIUM_SOURCE_CONNECTOR_CLASS=io.debezium.connector.postgresql.PostgresConnector
       - DEBEZIUM_SOURCE_DATABASE_HOSTNAME=host.docker.internal
       - DEBEZIUM_SOURCE_DATABASE_PORT=5434
       - DEBEZIUM_SOURCE_DATABASE_USER=postgres
       - DEBEZIUM_SOURCE_DATABASE_PASSWORD=K59Ptl*100504
-
       - DEBEZIUM_SOURCE_DATABASE_DBNAME=payment-db
 
       - DEBEZIUM_SOURCE_TOPIC_PREFIX=cdc_events
+      - DEBEZIUM_SOURCE_TABLE_INCLUDE_LIST=public.outbox_event
 
-      - DEBEZIUM_SOURCE_TABLE_INCLUDE_LIST=public.outbox_event # Chỉ định bảng muốn theo dõi
+      - DEBEZIUM_SOURCE_TRANSFORMS=outbox
+      - DEBEZIUM_SOURCE_TRANSFORMS_OUTBOX_TYPE=io.debezium.transforms.outbox.EventRouter
+      - DEBEZIUM_SOURCE_TRANSFORMS_OUTBOX_TABLE_FIELD_EVENT_ID=id
+      - DEBEZIUM_SOURCE_TRANSFORMS_OUTBOX_TABLE_FIELD_EVENT_KEY=aggregate_id
+      - DEBEZIUM_SOURCE_TRANSFORMS_OUTBOX_TABLE_FIELD_EVENT_TYPE=event_type
+      - DEBEZIUM_SOURCE_TRANSFORMS_OUTBOX_TABLE_FIELD_EVENT_PAYLOAD=payload
+      - DEBEZIUM_SOURCE_TRANSFORMS_OUTBOX_TABLE_FIELD_EVENT_STATE=status
+      - DEBEZIUM_SOURCE_TRANSFORMS_OUTBOX_ROUTE_BY_FIELD=aggregate_type
 
+      # FIX TUYỆT ĐỐI TẠI ĐÂY: Thêm dấu \ để escape cho Quarkus, $$ để escape cho Docker
+      - DEBEZIUM_SOURCE_TRANSFORMS_OUTBOX_ROUTE_TOPIC_REPLACEMENT=cdc_events.\$${routedByValue}
+      - DEBEZIUM_SOURCE_TRANSFORMS_OUTBOX_ROUTE_TOPIC_LOOKUP_DEFAULT=default
       - DEBEZIUM_SOURCE_PLUGIN_NAME=pgoutput
     depends_on:
       - rabbitmq
@@ -164,6 +177,53 @@ services:
         condition: service_healthy
       supplier-service:
         condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "kong", "health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    container_name: prometheus
+    volumes:
+      # Mount file cấu hình Prometheus
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - gateway-network
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=15d'
+      - '--web.enable-lifecycle'
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:10.4.1
+    container_name: grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin123
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      # Mount thư mục datasources
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      # Mount thư mục báo cho Grafana biết cấu hình dashboard
+      - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
+      # Mount thư mục chứa các file JSON biểu đồ thực tế
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - gateway-network
+    depends_on:
+      - prometheus
+    restart: unless-stopped
 
 networks:
   microservices-net:

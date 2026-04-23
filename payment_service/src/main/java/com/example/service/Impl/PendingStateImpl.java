@@ -40,6 +40,7 @@ public class PendingStateImpl implements ScheduleState {
         } else {
             entity.setInterestPaid(entity.getInterestPaid().add(remaining));
             entity.setStatus("PENDING");
+            scheduleRepository.save(entity);
             return BigDecimal.ZERO;
         }
 
@@ -49,9 +50,10 @@ public class PendingStateImpl implements ScheduleState {
             entity.setPrinciplePaid(entity.getPrincipalDue());
             remaining = remaining.subtract(principalOwed);
             entity.setStatus("PAID");
-            entity.setDueDate(LocalDate.now());
+//            entity.setDueDate(LocalDate.now());
         }else {
             entity.setPrinciplePaid(entity.getPrinciplePaid().add(remaining));
+//            scheduleRepository.save(entity);
             remaining = BigDecimal.ZERO;
         }
 ;

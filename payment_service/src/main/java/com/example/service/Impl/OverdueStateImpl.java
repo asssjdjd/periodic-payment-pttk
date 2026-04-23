@@ -4,6 +4,7 @@ package com.example.service.Impl;
 import com.example.model.LoanPaymentSchedule;
 import com.example.repository.LoanPaymentScheduleRepository;
 import com.example.service.ScheduleState;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,7 @@ public class OverdueStateImpl implements ScheduleState {
 
 
     @Override
+    @Transactional
     public BigDecimal pay(String loanPaymentScheduleId, BigDecimal amount, BigDecimal penaltyFee) {
         LoanPaymentSchedule entity = scheduleRepository.findById(loanPaymentScheduleId)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy kỳ thanh toán với ID: " + loanPaymentScheduleId));
@@ -36,6 +38,7 @@ public class OverdueStateImpl implements ScheduleState {
             remaining = remaining.subtract(penaltyOwed);
         } else {
             entity.setPenaltyFeePaid(entity.getPenaltyFeePaid().add(remaining));
+            scheduleRepository.save(entity);
             return BigDecimal.ZERO; // Hết tiền, dừng tại đây
         }
 
@@ -47,6 +50,7 @@ public class OverdueStateImpl implements ScheduleState {
             remaining = remaining.subtract(overdueInterestOwed);
         } else {
             entity.setOverdueInterestPaid(entity.getOverdueInterestPaid().add(remaining));
+            scheduleRepository.save(entity);
             return BigDecimal.ZERO; // Hết tiền, dừng tại đây
         }
 
@@ -57,6 +61,7 @@ public class OverdueStateImpl implements ScheduleState {
             remaining = remaining.subtract(interestOwed);
         } else {
             entity.setInterestPaid(entity.getInterestPaid().add(remaining));
+            scheduleRepository.save(entity);
             return BigDecimal.ZERO;
         }
 
@@ -69,9 +74,10 @@ public class OverdueStateImpl implements ScheduleState {
         } else {
             entity.setPrinciplePaid(entity.getPrinciplePaid().add(remaining));
 //            entity.setStatus("PARTIALLY_PAID"); vẫn là quá hạn
+//            scheduleRepository.save(entity);
             remaining = BigDecimal.ZERO;
         }
-        entity.setDueDate(LocalDate.now());
+//        entity.setDueDate(LocalDate.now());
         scheduleRepository.save(entity);
         return remaining;
     }

@@ -3,6 +3,8 @@ package com.example.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "outbox_event")
@@ -18,13 +20,14 @@ public class OutboxEvent extends BaseEntity {
     private String aggregateId;
 
     @Column(name = "aggregate_type", nullable = false)
-    private String aggregateType;
+    private String aggregateType; //Contract,LoanPaymentSchedule,OverDueLoanPaymentSchedule
 
     @Column(name = "event_type", nullable = false)
     private String eventType;
 
     // Trong PostgreSQL, Jsonb được map tốt nhất qua các thư viện như Hibernate Types.
     // Nếu chưa cài thư viện, lưu tạm dưới dạng String.
+    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "payload", columnDefinition = "jsonb", nullable = false)
     private String payload;
 
