@@ -1,18 +1,24 @@
 package com.example.service.Impl;
 
+import com.example.client.AccountClient;
 import com.example.dto.ContractDto;
 import com.example.dto.CustomerStatisticDto;
 import com.example.dto.LoanPaymentScheduleDto;
+import com.example.dto.response.ApiResponse;
+import com.example.dto.response.CustomerResponse;
 import com.example.dto.response.StatisticCustomerResponse;
 import com.example.entity.Contract;
 import com.example.entity.Customer;
 import com.example.entity.LoanPaymentSchedule;
 import com.example.repository.ContractRepository;
-import com.example.repository.CustomerRepository;
+//import com.example.repository.CustomerRepository;
 import com.example.repository.LoanPaymentScheduleRepository;
 import com.example.service.CustomerStatisticService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -29,15 +35,55 @@ public class CustomerStatisticServiceImpl implements CustomerStatisticService {
 
     private final LoanPaymentScheduleRepository loanPaymentScheduleRepository;
 
-    private final CustomerRepository customerRepository;
+//    private final CustomerRepository customerRepository;
+
+    private final AccountClient accountClient;
+
+    private final ObjectMapper objectMapper;
 
     // OVERDUE, PENDING, PAID
 
     @Override
     public StatisticCustomerResponse getStatisticCustomerOutstandingDebt(Float maxDebt, Float minDebt, LocalDate endDate, LocalDate fromDate) {
-        List<Customer> customers = customerRepository.findAll(); // Cần tối ưu query ở đây sau
-        List<CustomerStatisticDto> customerStatisticDtos = new ArrayList<>();
+//        List<Customer> customers = customerRepository.findAll();
 
+        ResponseEntity<ApiResponse.Payload> response = accountClient.getAllCustomers();
+
+        if (response == null || response.getBody() == null) {
+            throw new RuntimeException("Inventory Service không trả về dữ liệu (Response Body null).");
+        }
+
+        ApiResponse.Payload payload = response.getBody();
+
+        if (payload.getCode() != 200) {
+            String errorMsg = payload.getMessage();
+            throw new RuntimeException("Inventory từ chối yêu cầu. Lý do: " + errorMsg);
+        }
+
+        if (payload.getData() == null) {
+            throw new RuntimeException("Data rỗng, không có gì để map!");
+        }
+
+        Object rawData = payload.getData();
+
+        List<CustomerResponse> customerResponses = objectMapper.convertValue(
+                rawData,
+                new TypeReference<List<CustomerResponse>>() {}
+        );
+
+        List<Customer> customers = new ArrayList<>();
+
+        for(CustomerResponse customerResponse : customerResponses) {
+            Customer customer = Customer.builder()
+                    .id(customerResponse.getId())
+                    .fullName(customerResponse.getFullName())
+                    .phoneNumber(customerResponse.getPhoneNumber())
+                    .status(customerResponse.getStatus())
+                    .build();
+            customers.add(customer);
+        }
+
+        List<CustomerStatisticDto> customerStatisticDtos = new ArrayList<>();
         // 1. Chuyển đổi điều kiện lọc Float sang BigDecimal
         BigDecimal min = minDebt != null ? BigDecimal.valueOf(minDebt) : BigDecimal.ZERO;
         // Nếu maxDebt không truyền, cho nó một số rất lớn
