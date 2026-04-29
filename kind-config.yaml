@@ -1,23 +1,23 @@
-kind: Cluster
-apiVersion: kind.x-k8s.io/v1alpha4
-name: periodic-payment
-
-# Cấu hình nodes cho Kubernetes cluster
-nodes:
-# Control plane node (master node)
-- role: control-plane
-  image: kindest/node:v1.27.0  # Version ổn định hơn
-
-# Worker node 1 - chạy payment-service
-- role: worker
-  image: kindest/node:v1.27.0
-  labels:
-    kubernetes.io/hostname: worker-1
-    node-type: payment
-
-# Worker node 2 - chạy user-service
-- role: worker
-  image: kindest/node:v1.27.0
-  labels:
-    kubernetes.io/hostname: worker-2
-    node-type: user
+#kind: Cluster
+#apiVersion: kind.x-k8s.io/v1alpha4
+#name: periodic-payment
+#
+## Cấu hình nodes cho Kubernetes cluster
+#nodes:
+## Control plane node (master node)
+#- role: control-plane
+#  image: kindest/node:v1.27.0  # Version ổn định hơn
+#
+## Worker node 1 - chạy payment-service
+#- role: worker
+#  image: kindest/node:v1.27.0
+#  labels:
+#    kubernetes.io/hostname: worker-1
+#    node-type: payment
+#
+## Worker node 2 - chạy user-service
+#- role: worker
+#  image: kindest/node:v1.27.0
+#  labels:
+#    kubernetes.io/hostname: worker-2
+#    node-type: user

@@ -119,7 +119,7 @@ public class  LoanTransactionPaymentServiceImpl implements LoanTransactionPaymen
                     objectMapper.writeValueAsString(paymentEvent),
                     transactionLoanPaymentSchedule.getId()
             );
-            paymentOutbox.setStatus("COMPLETED");
+            paymentOutbox.setStatus("UPDATE");
             outboxEventRepository.save(paymentOutbox);
             log.info("[Outbox] Đã lưu event TransactionPaymentScheduleEvent");
         }catch (JsonProcessingException e) {

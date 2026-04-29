@@ -57,6 +57,13 @@ public class LoanPaymentScheduleJob {
                 log.debug("Bỏ qua lịch {} vì đã cập nhật quá hạn trong ngày hôm nay", schedule.getScheduleId());
                 continue;
             }
+            LocalDate updatedDate = schedule.getUpdatedAt().toLocalDate();
+            long updateDays = ChronoUnit.DAYS.between(updatedDate,now);
+
+            if(updateDays== 0) {
+                log.debug("Bỏ qua lịch {} vì đã cập nhật quá hạn trong ngày hôm nay - check!", schedule.getScheduleId());
+                continue;
+            }
 
             Contract contract = contractRepository.findById(schedule.getContractId())
                     .orElseThrow(() -> new EntityNotFoundException("Không tìm thấy contract với id : " + schedule.getContractId()));
@@ -102,7 +109,7 @@ public class LoanPaymentScheduleJob {
                 event.setAggregateType("OverDueLoanPaymentSchedule");
                 event.setEventType("OverdueScheduleUpdateEvent");
                 event.setPayload(objectMapper.writeValueAsString(overduePayload));
-                event.setStatus("RECEIVED");
+                event.setStatus("OVERDUE");
                 // Job tự động nên không có transaction thanh toán của khách hàng
                 event.setTransactionId(null);
 
@@ -115,7 +122,7 @@ public class LoanPaymentScheduleJob {
         scheduleRepository.saveAll(overdueSchedules);
         outboxEventRepository.saveAll(outboxEvents);
 
-        log.info("Đã cập nhật {} lịch quá hạn và lưu {} Outbox Events", overdueSchedules.size(), outboxEvents.size());
+        log.info("Đã duyệt qua {} lịch quá hạn và lưu {} Outbox Events", overdueSchedules.size(), outboxEvents.size());
     }
 
     private BigDecimal getOrDefault(BigDecimal value) {

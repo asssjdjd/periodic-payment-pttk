@@ -49,7 +49,7 @@ public class PaymentEventListener {
                                                @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) throws IOException {
         try {
             String rawPayload = new String(message.getBody());
-            log.info("[Stats Service] Nhận được tin nhắn gốc: {}", rawPayload);
+            log.info("[Statistic Service] Nhận được tin nhắn cập nhật lại hợp đồng thanh toán gốc: {}", rawPayload);
             String uniqueEventId =  java.util.UUID.randomUUID().toString();
 
             // Bước 1: Luôn parse chuỗi gốc thành JsonNode
@@ -70,7 +70,7 @@ public class PaymentEventListener {
             PaymentEventDto eventDto = objectMapper.treeToValue(actualDataNode, PaymentEventDto.class);
 
 
-            log.info("[contractId : {}] ; [InterestPaid : {}]; [PrinciplePaid : {}]; [ScheduleId : {}]; [Status : {}] [AmountPaid : {}]; [penaltyFeePaid : {}] [overdueInterestPaid : {}]",
+            log.info("[Statistic Service] Map thành công với các thong tin [contractId : {}] ; [InterestPaid : {}]; [PrinciplePaid : {}]; [ScheduleId : {}]; [Status : {}] [AmountPaid : {}]; [penaltyFeePaid : {}] [overdueInterestPaid : {}]",
                     eventDto.getContractId(), eventDto.getInterestPaid(),
                     eventDto.getPrinciplePaid(), eventDto.getScheduleId(), eventDto.getStatus(), eventDto.getAmountPaid(), eventDto.getPenaltyFeePaid(), eventDto.getOverdueInterestPaid());
 
@@ -103,7 +103,7 @@ public class PaymentEventListener {
 
             channel.basicAck(deliveryTag, false);
         } catch (Exception e) {
-            log.error("[Stats Service] Lỗi xử lý tin nhắn. Delivery Tag: {}", deliveryTag, e);
+            log.error("[Statistic Service] Lỗi xử lý tin nhắn. Delivery Tag: {}", deliveryTag, e);
             channel.basicNack(deliveryTag, false, false);
             throw new RuntimeException("Lỗi xử lý event, yêu cầu Rollback", e);
         }
@@ -115,7 +115,7 @@ public class PaymentEventListener {
                                     @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) throws IOException {
         try {
             String rawPayload = new String(message.getBody());
-            log.info("[Stats Service] Nhận được tin nhắn gốc: {}", rawPayload);
+            log.info("[Statistic Service] Nhận được tin nhắn cập nhật trạng thái của các bản hợp đồng: {}", rawPayload);
             String uniqueEventId =  java.util.UUID.randomUUID().toString();
 
             // Bước 1: Luôn parse chuỗi gốc thành JsonNode
@@ -136,7 +136,7 @@ public class PaymentEventListener {
             ContractEventDto contractEventDto = objectMapper.treeToValue(actualDataNode, ContractEventDto.class);
 
 
-            log.info("[contractId : {}] ; [Status : {}] ",
+            log.info("[Statistic Service] Map thành công với các thong tin [contractId : {}] ; [Status : {}] ",
                     contractEventDto.getContractId(), contractEventDto.getStatus());
 
 
@@ -166,7 +166,7 @@ public class PaymentEventListener {
             channel.basicAck(deliveryTag, false);
 
         } catch (Exception e) {
-            log.error("[Stats Service] Lỗi xử lý tin nhắn. Delivery Tag: {}", deliveryTag, e);
+            log.error("[Statistic Service] Lỗi xử lý tin nhắn. Delivery Tag: {}", deliveryTag, e);
             channel.basicNack(deliveryTag, false, false);
             throw new RuntimeException("Lỗi xử lý event, yêu cầu Rollback", e);
         }
@@ -178,7 +178,7 @@ public class PaymentEventListener {
                                                @Header(AmqpHeaders.DELIVERY_TAG) long deliveryTag) throws IOException {
         try {
             String rawPayload = new String(message.getBody());
-            log.info("[Stats Service] Nhận được tin nhắn gốc: {}", rawPayload);
+            log.info("[Statistic Service] Nhận được tin nhắn cập nhật các lịch quá hạn {}", rawPayload);
 
             String uniqueEventId =  java.util.UUID.randomUUID().toString();
 
@@ -200,7 +200,7 @@ public class PaymentEventListener {
             UpdateLoanPaymentEventDto eventDto = objectMapper.treeToValue(actualDataNode, UpdateLoanPaymentEventDto.class);
 
 
-            log.info("[overdueInterest : {}] ; [penaltyFee : {}]; [status : {}]; [ScheduleId : {}]",
+            log.info("[Statistic Service] Map thành công với các thong tin [overdueInterest : {}] ; [penaltyFee : {}]; [status : {}]; [ScheduleId : {}]",
                     eventDto.getOverdueInterest(), eventDto.getPenaltyFee(), eventDto.getStatus(), eventDto.getScheduleId());
 
             InboxEvent inbox = InboxEvent.builder()
@@ -230,7 +230,7 @@ public class PaymentEventListener {
 
             channel.basicAck(deliveryTag, false);
         } catch (Exception e) {
-            log.error("[Stats Service] Lỗi xử lý tin nhắn. Delivery Tag: {}", deliveryTag, e);
+            log.error("[Statístic Service] Lỗi xử lý tin nhắn. Delivery Tag: {}", deliveryTag, e);
             channel.basicNack(deliveryTag, false, false);
             throw new RuntimeException("Lỗi xử lý event, yêu cầu Rollback", e);
         }
