@@ -31,8 +31,7 @@ public class CustomerStatisticController {
         Float maxDebt = statisticCustomerRequest.getMinDebt();
 //        String customerId = statisticCustomerRequest.getCustomerId();
 
-        log.info("[Statistic Service] Nhận được yêu cầu xem thông tin dư nợ khách hàng với minDebt : {}; maxDebt : {}; fromDate : {}; endDate :{}",
-                minDebt,maxDebt,fromDate,endDate);
+        log.info("[Statistic Service] Nhận được yêu cầu xem thông tin dư nợ khách hàng");
 
         StatisticCustomerResponse response = customerStatisticService.getStatisticCustomerOutstandingDebt(
                 maxDebt,minDebt,endDate,fromDate);
