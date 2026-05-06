@@ -1,4 +1,12 @@
 _format_version: "3.0"
+
+plugins:
+  - name: correlation-id
+    config:
+      header_name: X-Correlation-ID
+      generator: uuid
+      echo_downstream: true
+
 services:
   - name: statistics-service
     url: http://statistics-service:8081
@@ -21,7 +29,7 @@ services:
     routes:
       - name: account-route
         paths:
-          - /api/v1/accounts
+          - /api/v1/customers
         strip_path: false
 
   - name: supplier-service
@@ -30,4 +38,5 @@ services:
       - name: supplier-route
         paths:
           - /api/v1/suppliers
+          - /api/v1/import-orders
         strip_path: false
